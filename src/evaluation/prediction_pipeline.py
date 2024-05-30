@@ -8,24 +8,23 @@ import numpy as np
 from tqdm import tqdm
 from deepforest import main
 
-
-ANNOTATIONS_PATH = "/Users/julianzabbarov/Documents/HPI/Analysis_and_Visualization_of_Spatial_Data/tree-detection/data/evaluation/benchmark_annotations.csv"
-IMAGES_PATH = "/Users/julianzabbarov/Documents/HPI/Analysis_and_Visualization_of_Spatial_Data/tree-detection/data/evaluation/RGB_with_annotations"
-EXPORT_PRED_PATH = "/Users/julianzabbarov/Documents/HPI/Analysis_and_Visualization_of_Spatial_Data/tree-detection/src/evaluation"
+ANNOTATIONS_PATH = "/data/neontree/evaluation/benchmark_annotations.csv"
+IMAGES_PATH = "/data/neontree/evaluation/RGB_with_annotations"
+EXPORT_PRED_PATH = "src/evaluation"
 
 class NeonTreeEvaluation(Dataset):
     def __init__(self, annotations_file, img_dir, transform=None, target_transform=None):
-        self.img_labels = pd.read_csv(annotations_file)
+        self.img_labels = pd.read_csv(os.getcwd() + annotations_file)
         self.img_dir = img_dir
-        self.img_names = os.listdir(self.img_dir)
+        self.img_names = os.listdir(os.getcwd() + self.img_dir)
         self.transform = transform
         self.target_transform = target_transform
 
     def __len__(self):
-        return len(os.listdir(self.img_dir))
+        return len(os.listdir(os.getcwd() + self.img_dir))
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.img_dir, self.img_names[idx])
+        img_path = os.path.join(os.getcwd() + self.img_dir, self.img_names[idx])
         image = imread(img_path)
         image = np.array(image)#.astype(np.float32)
         
@@ -59,9 +58,8 @@ for img_idx in tqdm(range(len(neontree))):
 # format predictions
 predictions = predictions[["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"]]
 predictions.sort_values(by="image_path", inplace=True)
-predictions["image_path"] = predictions["image_path"].str.replace(".tif", "")
 predictions.reset_index(drop=True, inplace=True)
 
 # export predictions
-predictions.to_csv(os.path.join(EXPORT_PRED_PATH, "benchmark_predictions.csv"), index=False)
+predictions.to_csv(os.path.join(os.getcwd(), EXPORT_PRED_PATH, "benchmark_predictions.csv"), index=False)
 
