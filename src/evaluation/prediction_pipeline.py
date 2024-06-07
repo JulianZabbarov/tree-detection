@@ -53,11 +53,6 @@ class NeonTreeEvaluation(Dataset):
         image = imread(img_path)
         image = np.array(image)
 
-        xmin = self.img_labels.iloc[idx, 1]
-        ymin = self.img_labels.iloc[idx, 2]
-        xmax = self.img_labels.iloc[idx, 3]
-        ymax = self.img_labels.iloc[idx, 4]
-
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
@@ -69,7 +64,9 @@ class NeonTreeEvaluation(Dataset):
 
 
 print("\nLoading dataset and model ...")
-neontree = NeonTreeEvaluation(args.annotations_path, args.images_path, None, None)
+neontree = NeonTreeEvaluation(
+    args.annotations_path, args.images_path, None, None
+)
 
 model = main.deepforest()
 model.use_release()
@@ -80,7 +77,8 @@ predictions = pd.DataFrame()
 print("\nRunning predictions ...")
 for img_idx in tqdm(range(len(neontree))):
     pred = model.predict_image(
-        image=neontree.__getitem__(img_idx).astype(np.float32), return_plot=False
+        image=neontree.__getitem__(img_idx).astype(np.float32),
+        return_plot=False,
     )
     pred["image_path"] = neontree.__getname__(img_idx)
     predictions = pd.concat([predictions, pred])
@@ -98,4 +96,8 @@ predictions.to_csv(
     index=False,
 )
 
-print("\nPredictions exported to: {export}.".format(export=os.path.join(os.getcwd(), args.export_path)))
+print(
+    "\nPredictions exported to: {export}.".format(
+        export=os.path.join(os.getcwd(), args.export_path)
+    )
+)

@@ -15,3 +15,10 @@ python src/evaluation/prediction_pipeline.py --path-to-labels "/data/neontree/ev
 ```
 python src/evaluation/evaluate_predictions.py --path-to-predictions "src/evaluation/benchmark_predictions.csv" --path-to-labels "data/neontree/evaluation/benchmark_annotations.csv" --iou-threshold 0.4
 ```
+
+### Split tiff into tiles
+
+Alternative:
+```
+vips dzsave data/sauen/raw/20230720_Sauen_3512a1.tif data/sauen/tiles/unfiltered --depth one --tile-size 4000 --overlap 0 --suffix .tif
+```
