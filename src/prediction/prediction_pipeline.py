@@ -87,8 +87,7 @@ for img_idx in tqdm(range(len(neontree))):
 predictions = predictions[
     ["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"]
 ]
-predictions.sort_values(by="image_path", inplace=True)
-predictions.reset_index(drop=True, inplace=True)
+predictions.sort_values(by="image_path", inplace=True).reset_index(drop=True)
 
 # export predictions
 predictions.to_csv(
