@@ -5,15 +5,20 @@ Repository for the course "Algorithms for Analysis and Visualization of Spatial 
 
 ### Predict with DeepForest model
 
+Run predictions on NeonTreeDataset
 ```
-python src/evaluation/prediction_pipeline.py --path-to-labels "/data/neontree/evaluation/benchmark_annotations.csv" --path-to-images "/data/neontree/evaluation/RGB_with_annotations" --export-path "src/evaluation"
+python src/prediction/run_tree_detection.py -c experiments/neontree/config.toml
 ```
 
+Run predictions on dataset from Sauen
+```
+python src/prediction/run_tree_detection.py -c experiments/sauen/config.toml
+```
 
 ### Evaluation predictions
 
 ```
-python src/evaluation/evaluate_predictions.py --path-to-predictions "src/evaluation/benchmark_predictions.csv" --path-to-labels "data/neontree/evaluation/benchmark_annotations.csv" --iou-threshold 0.4
+python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments/neontree/annotations/neontree.csv" --path-to-labels "data/neontree/evaluation/benchmark_annotations.csv" --iou-threshold 0.4
 ```
 
 ### Split tiff into tiles

@@ -1,2 +1,5 @@
 /data
 **/lightning_logs
+**/predicted_images
+**.csv
+**.xml

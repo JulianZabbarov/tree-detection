@@ -1,0 +1,13 @@
+[data]
+path_to_images = "data/sauen/tiles/selection" # relative path to image folder
+image_size = 4000 # size of images to label
+
+[export]
+annotations_path = "experiments/sauen/annotations" # export folder for annotations
+image_path = "experiments/sauen/predicted_images" # export folder of images in png for annotating in RectLabel
+type = "per_image" # alternative "combined"
+annotations_format = "XML" # alternative "CSV"
+image_format = "PNG"
+sort_values = ["xmin", "ymin", "xmax", "ymax"] # relevant for CSV only
+column_order = ["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"] # relevant for CSV only
+index_as_label_suffix = true
