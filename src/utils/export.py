@@ -60,11 +60,13 @@ def export_predictions_as_xml(
     segmented = ET.SubElement(annotation, "segmented")
     segmented.text = "0"
 
-    for _, row in pred.iterrows():
+    pred = pred.sort_values(by=export_config.sort_values).reset_index()
+
+    for idx, row in pred.iterrows():
         object_element = ET.SubElement(annotation, "object")
 
         name = ET.SubElement(object_element, "name")
-        name.text = str(row["label"])
+        name.text = str(row["label"] + str(idx))
 
         bndbox = ET.SubElement(object_element, "bndbox")
 
