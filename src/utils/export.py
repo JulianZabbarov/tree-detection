@@ -1,6 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
-from experiments.config_definition import ExportConfig
+from src.configs.config_definition import ExportConfig
 
 import pandas as pd
 
@@ -30,9 +30,9 @@ def export_predictions_as_xml(
     image_name: str,
     image_folder: str,
     export_config: ExportConfig,
-    width: int = 4000,
-    height: int = 4000,
+    image_size: int,
     depth: int = 3,
+    scale_annotations: bool = False,
 ) -> None:
     annotation = ET.Element("annotation")
 
@@ -49,10 +49,10 @@ def export_predictions_as_xml(
 
     size = ET.SubElement(annotation, "size")
     width_element = ET.SubElement(size, "width")
-    width_element.text = str(width)
+    width_element.text = str(image_size)
 
     height_element = ET.SubElement(size, "height")
-    height_element.text = str(height)
+    height_element.text = str(image_size)
 
     depth_element = ET.SubElement(size, "depth")
     depth_element.text = str(depth)
@@ -61,6 +61,12 @@ def export_predictions_as_xml(
     segmented.text = "0"
 
     pred = pred.sort_values(by=export_config.sort_values).reset_index()
+
+    if scale_annotations:
+        pred["xmin"] = pred["xmin"] * image_size / 400
+        pred["xmax"] = pred["xmax"] * image_size / 400
+        pred["ymin"] = pred["ymin"] * image_size / 400
+        pred["ymax"] = pred["ymax"] * image_size / 400
 
     for idx, row in pred.iterrows():
         object_element = ET.SubElement(annotation, "object")
@@ -71,19 +77,21 @@ def export_predictions_as_xml(
         bndbox = ET.SubElement(object_element, "bndbox")
 
         xmin = ET.SubElement(bndbox, "xmin")
-        xmin.text = str(row["xmin"] * width / 400)
+        xmin.text = str(row["xmin"])# * width / 400)
 
         xmax = ET.SubElement(bndbox, "xmax")
-        xmax.text = str(row["xmax"] * width / 400)
+        xmax.text = str(row["xmax"])# * width / 400)
 
         ymin = ET.SubElement(bndbox, "ymin")
-        ymin.text = str(row["ymin"] * height / 400)
+        ymin.text = str(row["ymin"])# * height / 400)
 
         ymax = ET.SubElement(bndbox, "ymax")
-        ymax.text = str(row["ymax"] * height / 400)
+        ymax.text = str(row["ymax"])# * height / 400)
 
     tree = ET.ElementTree(annotation)
     xml_file = image_name.replace(".tif", ".xml")
+    if not os.path.exists(os.path.join(os.getcwd(), export_config.annotations_path)):
+        os.mkdir(os.path.join(os.getcwd(), export_config.annotations_path))
     tree.write(
         os.path.join(os.getcwd(), export_config.annotations_path, xml_file),
         encoding="unicode",
