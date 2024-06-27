@@ -1,3 +1,8 @@
+[training]
+annotations_folder = "experiments/sauen/edited_annotations_120m_1140px_3510b2" # relative path to annotations folder
+images_folder = "experiments/sauen/predicted_120m_1140px_3510b2"
+num_epochs=5
+
 [data]
 path_to_images = "data/sauen/tiles/120m_1240px_3512a1_merged" # relative path to image folder
 predict_tile = true # whether images are tiles or already crops

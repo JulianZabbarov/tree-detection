@@ -57,8 +57,6 @@ def export_prediction_as_xml(
     path_element = ET.SubElement(annotation, "path")
     path_element.text = f"{path}{filename}"
 
-    # source = ET.SubElement(annotation, "source")
-
     size = ET.SubElement(annotation, "size")
     width_element = ET.SubElement(size, "width")
     width_element.text = str(width)

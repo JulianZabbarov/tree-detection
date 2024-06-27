@@ -2,6 +2,13 @@ import dataclasses
 
 
 @dataclasses.dataclass
+class TrainingConfig:
+    annotations_folder: str
+    images_folder: str
+    num_epochs: int = 10
+
+
+@dataclasses.dataclass
 class DataConfig:
     path_to_images: str
     predict_tile: bool
@@ -23,5 +30,6 @@ class ExportConfig:
 
 @dataclasses.dataclass
 class PipelineConfig:
-    data: DataConfig
-    export: ExportConfig
+    data: DataConfig | None = None
+    training: TrainingConfig | None = None
+    export: ExportConfig | None = None
