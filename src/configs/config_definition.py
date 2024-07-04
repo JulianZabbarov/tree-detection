@@ -5,6 +5,7 @@ import dataclasses
 class TrainingConfig:
     annotations_folder: str
     images_folder: str
+    patch_size: int
     num_epochs: int = 10
 
 
