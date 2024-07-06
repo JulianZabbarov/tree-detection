@@ -1,0 +1,7 @@
+START
+Python 3.11.9
+
+Loading dataset and model ...
+Reading config file: /hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/deepforest/data/deepforest_config.yml
+No validation file provided. Turning off validation loop
+FINISHED

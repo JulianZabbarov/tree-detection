@@ -41,7 +41,7 @@ with warnings.catch_warnings():
     results = evaluate(
         predictions=pred,
         ground_df=ann,
-        root_dir="data/neontree/evaluation/RGB_with_annotations",
+        root_dir="experiments/sauen/predictions_120m_1140px_3510b2",
         iou_threshold=float(args.iou_threshold),
     )
 
