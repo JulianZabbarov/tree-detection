@@ -8,6 +8,10 @@ import pandas as pd
 def export_predictions_as_csv(
     pred_df: pd.DataFrame, export_config: ExportConfig, image_name: str
 ) -> None:
+    # replace tif with png in image path to match annotation format
+    if export_config.image_format == "PNG":
+        pred_df["image_path"] = pred_df["image_path"].str.replace(".tif", ".png")
+
     # sort by label
     if export_config.sort_values:
         pred_df.sort_values(
@@ -56,8 +60,6 @@ def export_predictions_as_xml(
     path_element = ET.SubElement(annotation, "path")
     path_element.text = f"{image_folder}{image_name}"
 
-    # source = ET.SubElement(annotation, "source")
-
     size = ET.SubElement(annotation, "size")
     width_element = ET.SubElement(size, "width")
     width_element.text = str(image_size)
@@ -88,16 +90,16 @@ def export_predictions_as_xml(
         bndbox = ET.SubElement(object_element, "bndbox")
 
         xmin = ET.SubElement(bndbox, "xmin")
-        xmin.text = str(row["xmin"])# * width / 400)
+        xmin.text = str(row["xmin"])
 
         xmax = ET.SubElement(bndbox, "xmax")
-        xmax.text = str(row["xmax"])# * width / 400)
+        xmax.text = str(row["xmax"])
 
         ymin = ET.SubElement(bndbox, "ymin")
-        ymin.text = str(row["ymin"])# * height / 400)
+        ymin.text = str(row["ymin"])
 
         ymax = ET.SubElement(bndbox, "ymax")
-        ymax.text = str(row["ymax"])# * height / 400)
+        ymax.text = str(row["ymax"])
 
     tree = ET.ElementTree(annotation)
     xml_file = image_name.replace(".tif", ".xml")

@@ -16,7 +16,6 @@
 echo "START"
 source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
-pwd
 # export WANDB_API_KEY="565b0acd482690fc7eecd3eaec6f503f55bfa969"
 srun python src/training/finetune.py -c experiments/sauen/finetuning_config.toml
 echo "FINISHED"

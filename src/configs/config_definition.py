@@ -27,6 +27,15 @@ class ExportConfig:
     index_as_label_suffix: bool
     image_size: int | None = None
     image_path: str | None = None
+    plot_predictions: bool = False
+
+
+@dataclasses.dataclass
+class VisualizationConfig:
+    image_folder: str
+    predictions_folder: str
+    label_folder: str
+    export_folder: str
 
 
 @dataclasses.dataclass
@@ -34,3 +43,4 @@ class PipelineConfig:
     data: DataConfig | None = None
     training: TrainingConfig | None = None
     export: ExportConfig | None = None
+    visualization: VisualizationConfig | None = None
