@@ -9,6 +9,7 @@ from deepforest import utilities, main, preprocess
 from pytorch_lightning.loggers import WandbLogger
 
 from src.utils.imports import load_config
+from src.prediction.run_tree_detection import start_prediction
 
 
 def get_annotations(path: str):
@@ -19,29 +20,27 @@ if __name__ == "__main__":
     # load config file
     config = load_config()
 
+    print("\nLoading data ...")
+
     # get annotations from xml file
     folder = config.training.annotations_folder
     for file in os.listdir(folder):
         if file.endswith(".xml"):
             annotations = get_annotations(os.path.join(folder, file))
             annotations["label"] = "Tree"
-            print(annotations.head())
             annotations.to_csv(
                 os.path.join(folder, str(file).replace(".xml", ".csv")),
                 index=False,
             )
 
     # load path for image and annotations used for training
-    print(config.training.images_folder[1])
     raster = os.listdir(config.training.images_folder)[1]
-    print("raster", raster)
     annotation = None
     for file in os.listdir(config.training.annotations_folder):
-        print(file)
         if file.endswith(".csv") and file.startswith(raster.split(".")[0]):
             annotation = file
             break
-    print("annotation", annotation)
+
     # create crops for the raster
     crop_dir = os.path.join(os.getcwd(), config.training.images_folder, "tiles")
     if not os.path.exists(crop_dir):
@@ -59,9 +58,9 @@ if __name__ == "__main__":
     logger = WandbLogger(project="tree-detection_sauen")
     wandb.init(project='tree_detection-sauen', entity='julianzabbarov')
 
+    print("\nStarting training ...")
+
     # configure model
-    print("train.csv_file", os.path.join(crop_dir, annotation))
-    print("train.root_dir", os.path.dirname(os.path.join(crop_dir, annotation)))
     model = main.deepforest()
     model.use_release()
     model.config["gpus"] = "-1"
@@ -74,6 +73,10 @@ if __name__ == "__main__":
     
     model.create_trainer(precision=16, log_every_n_steps=1, logger=logger)
     model.trainer.fit(model)
+
+    print("\nPredicting ...")
+
+    start_prediction(model, config=config)
 
     # save model
     # model.save(os.path.join(os.getcwd(), "experiments/sauen/saved_models/finetuned_model.pth"))

@@ -38,31 +38,33 @@ def get_config():
 
 class TreeDataset(Dataset):
     def __init__(
-        self, img_dir, transform: bool = True, target_transform: bool = False
+        self, config, transform: bool = True, target_transform: bool = False
     ):
-        self.img_dir = img_dir
-        self.img_names = os.listdir(os.getcwd() + "/" + self.img_dir)
+        self.config = config
+        self.img_names = os.listdir(os.getcwd() + "/" + self.config.data.path_to_images)
         self.transform = transform
         self.target_transform = target_transform
 
     def __len__(self):
-        return len(os.listdir(os.getcwd() + "/" + self.img_dir))
+        return len(os.listdir(os.getcwd() + "/" + self.config.data.path_to_images))
 
     def __getitem__(self, idx):
-        img_path = os.path.join(os.getcwd(), self.img_dir, self.img_names[idx])
+        img_path = os.path.join(os.getcwd(), self.config.data.path_to_images, self.img_names[idx])
         image_array = np.array(imread(img_path))[:, :, :3].astype(np.uint8)
         image = Image.fromarray(image_array)
 
-        if not os.path.exists(os.path.join(os.getcwd(), config.export.image_path)):
-            os.mkdir(os.path.join(os.getcwd(), config.export.image_path))
+        if not os.path.exists(os.path.join(os.getcwd(), self.config.export.image_path)):
+            os.mkdir(os.path.join(os.getcwd(), self.config.export.image_path))
         image.save(
-            f"{os.getcwd()}/{config.export.image_path}/{self.img_names[idx].replace('.tif', '.png')}",
+            f"{os.getcwd()}/{self.config.export.image_path}/{self.img_names[idx].replace('.tif', '.png')}",
             type="PNG",
         )
         
         if self.transform:
+            # resize image to 400x400, default for deepforest
             image = image.resize((400, 400))
         if self.target_transform:
+            # don't resize for tile prediction
             label = self.target_transform(label)
 
         image = np.array(image)
@@ -72,20 +74,17 @@ class TreeDataset(Dataset):
         return self.img_names[idx]
 
 
-def start_prediction(config):
+def start_prediction(model, config):
     print("\nLoading dataset and model ...")
 
     if not config.data.predict_tile:
         tree_dataset = TreeDataset(
-            config.data.path_to_images, transform=True, target_transform=False
+            config, transform=True, target_transform=False
         )
     else:
         tree_dataset = TreeDataset(
-            config.data.path_to_images, transform=False, target_transform=False
+            config, transform=False, target_transform=False
         )
-
-    model = main.deepforest()
-    model.use_release()
 
     all_predictions = pd.DataFrame() if config.export.type == "combined" else None
 
@@ -102,7 +101,6 @@ def start_prediction(config):
                 image=tree_dataset.__getitem__(img_idx).astype(np.float32),
                 return_plot=False,
             )
-        print(len(pred))
         pred["image_path"] = tree_dataset.__getname__(img_idx)
         if all_predictions is not None:
             all_predictions = pd.concat([all_predictions, pred], axis=0)
@@ -140,4 +138,9 @@ def start_prediction(config):
 
 if __name__ == "__main__":
     config = get_config()
-    start_prediction(config=config)
+
+    # loading model
+    model = main.deepforest()
+    model.use_release()
+
+    start_prediction(model, config=config)

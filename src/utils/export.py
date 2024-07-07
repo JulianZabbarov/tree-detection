@@ -8,19 +8,30 @@ import pandas as pd
 def export_predictions_as_csv(
     pred_df: pd.DataFrame, export_config: ExportConfig, image_name: str
 ) -> None:
-    # export predictions
+    # sort by label
     if export_config.sort_values:
         pred_df.sort_values(
             by=export_config.sort_values,
             inplace=True,
         )  # .reset_index(drop=True)
         pred_df = pred_df.reset_index(drop=True)
+
+    # add index as label suffix
     if export_config.index_as_label_suffix:
         pred_df["label"] = pred_df["label"] + pred_df.index.astype(str)
+
+    # reorder columns
     if export_config.column_order:
         pred_df = pred_df[export_config.column_order]
+
+    # create export folder if not exists
+    export_folder = os.path.join(os.getcwd(), export_config.annotations_path)
+    if not os.path.exists(export_folder):
+        os.mkdir(export_folder)
+        
+    # export to csv
     pred_df.to_csv(
-        os.path.join(os.getcwd(), export_config.annotations_path, image_name + ".csv"),
+        os.path.join(os.getcwd(), export_config.annotations_path, image_name.split(".")[0] + ".csv"),
         index=False,
     )
 
