@@ -19,6 +19,10 @@ def load_config():
     )
     args = parser.parse_args()
 
+    # throw error if no arguments are passed
+    if not args.config:
+        raise ValueError("No config file provided. Please relative path to a config file.")
+
     with open(args.config, "rb") as f:
         config = from_dict(data_class=PipelineConfig, data=tomllib.load(f))
     return config

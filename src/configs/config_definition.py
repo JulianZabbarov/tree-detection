@@ -33,6 +33,7 @@ class ExportConfig:
 @dataclasses.dataclass
 class VisualizationConfig:
     image_folder: str
+    image_format: str
     predictions_folder: str
     label_folder: str
     export_folder: str

@@ -22,6 +22,7 @@ index_as_label_suffix = true # use index of row as label suffix
 
 [visualization]
 image_folder = "experiments/sauen/predictions/finetuning_predictions_120m_1140px_3510b2" # relative path to image folder
+image_format = "png"
 predictions_folder = "experiments/sauen/predictions/finetuning_predictions_120m_1140px_3510b2" # relative path to folder with predictions
-label_folder = "experiments/sauen/predictions/edited_annotations_120m_1140px_3510b2" # relative path to folder with labels
+label_folder = "experiments/sauen/labels/edited_annotations_120m_1140px_3510b2" # relative path to folder with labels
 export_folder = "experiments/sauen/figures/120m_1140px_3510b2" # relative path to folder where exported images are saved
