@@ -6,8 +6,10 @@ from pathlib import Path
 import pandas as pd
 import tifffile as tiff
 import matplotlib.pyplot as plt
+import numpy as np
+import cv2
 
-from deepforest.visualize import plot_prediction_and_targets
+from deepforest.visualize import plot_predictions
 
 from src.utils.imports import load_config
 
@@ -33,21 +35,37 @@ if __name__ == "__main__":
         raise ValueError("No image-predictions pair found in specified folder.")
     
     for file in files:
-        image_path = Path(config.image_folder) / f"{file}.{config.image_format}"
         # read in image
+        image_path = Path(config.image_folder) / f"{file}.{config.image_format}"
         if config.image_format == "png":
-            image = plt.imread(image_path)
+            image = cv2.imread(image_path)
 
         if config.image_format == "tif":
             image = tiff.imread(image_path)
+        image = np.array(image).astype(np.uint8).copy()
 
-        label_path = os.path.join(Path(config.label_folder), f"{file}.csv")
-        prediction_path = os.path.join(Path(config.predictions_folder), f"{file}.csv")
-        export_path = os.path.join(Path(config.export_folder), f"{file}.png")
-        path_of_exported_image = plot_prediction_and_targets(
+
+        # plot labels on image
+        labels = pd.read_csv(os.path.join(Path(config.label_folder), f"{file}.csv"))
+        labels = labels[["xmin", "ymin", "xmax", "ymax", "label"]]
+        image = plot_predictions(
             image=image,
-            targets=pd.read_csv(label_path),
-            predictions= pd.read_csv(prediction_path),
-            export_path=export_path,
+            df=labels,
+            color=(0, 165, 255), # orange
+            thickness=4
         )
-        print("Image exported to: ", path_of_exported_image)
+
+        # plot predictions
+        predictions = pd.read_csv(os.path.join(Path(config.predictions_folder), f"{file}.csv"))
+        predictions = predictions[["xmin", "ymin", "xmax", "ymax", "label"]]
+        image = plot_predictions(
+            image=image,
+            df=predictions,
+            color=(255, 89, 0), # blue
+            thickness=2
+        )
+
+        # export image to config.export_folder
+        export_path = os.path.join(Path(config.export_folder), f"{file}.png")
+        cv2.imwrite(export_path, image)
+        print(f"Exported image to {export_path}")
