@@ -1,1 +1,1 @@
-vi .gitattributes
+*.* linguist-language=Python
