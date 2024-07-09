@@ -12,6 +12,7 @@ import cv2
 from deepforest.visualize import plot_predictions
 
 from src.utils.imports import load_config
+from src.utils.export import create_folder_if_not_exists
 
 def get_filenames_in_folder(path: str, type: str) -> set:
     files = os.listdir(Path(path))
@@ -52,7 +53,7 @@ if __name__ == "__main__":
             image=image,
             df=labels,
             color=(0, 165, 255), # orange
-            thickness=4
+            thickness=6,
         )
 
         # plot predictions
@@ -62,10 +63,12 @@ if __name__ == "__main__":
             image=image,
             df=predictions,
             color=(255, 89, 0), # blue
-            thickness=2
+            thickness=4
         )
 
         # export image to config.export_folder
-        export_path = os.path.join(Path(config.export_folder), f"{file}.png")
+        export_folder = os.path.join(os.getcwd(), Path(config.export_folder))
+        create_folder_if_not_exists(export_folder)
+        export_path = os.path.join(export_folder, f"{file}.png")
         cv2.imwrite(export_path, image)
         print(f"Exported image to {export_path}")

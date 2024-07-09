@@ -13,3 +13,10 @@ image_format = "PNG" # image format of exported image to label
 sort_values = ["ymax", "xmin"] # relevant for CSV only
 column_order = ["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"] # relevant for CSV only
 index_as_label_suffix = true
+
+[visualization]
+image_folder = "experiments/sauen/predictions/predictions_120m_1140px_3510b2" # relative path to image folder
+image_format = "png"
+predictions_folder = "experiments/sauen/predictions/predictions_120m_1140px_3510b2" # relative path to folder with predictions
+label_folder = "experiments/sauen/labels/edited_annotations_120m_1140px_3510b2" # relative path to folder with labels
+export_folder = "experiments/sauen/figures/predictions_120m_1140px_3510b2" # relative path to folder where exported images are saved

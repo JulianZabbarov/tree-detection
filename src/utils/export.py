@@ -5,6 +5,12 @@ from src.configs.config_definition import ExportConfig
 import pandas as pd
 
 
+def create_folder_if_not_exists(folder: str):
+    if not os.path.exists(folder):
+        print("Creating folder:", folder, "...")
+        os.makedirs(folder)
+
+
 def export_predictions_as_csv(
     pred_df: pd.DataFrame, export_config: ExportConfig, image_name: str
 ) -> None:

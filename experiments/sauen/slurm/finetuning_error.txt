@@ -1,48 +1,8 @@
 /hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/deepforest/utilities.py:351: UserWarning: Annotations file contained non-integer coordinates. These coordinates were rounded to nearest int. All coordinates must correspond to pixels in the image coordinate system. If you are attempting to use projected data, first convert it into image coordinates see FAQ for suggestions.
   warnings.warn(
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/rasterio/__init__.py:304: NotGeoreferencedWarning: Dataset has no geotransform, gcps, or rpcs. The identity matrix will be returned.
-  dataset = DatasetReader(path, driver=driver, sharing=sharing, **kwargs)
-wandb: Currently logged in as: julianzabbarov. Use `wandb login --relogin` to force relogin
-wandb: Tracking run with wandb version 0.17.4
-wandb: Run data is saved locally in /hpi/fs00/home/julian.zabbarov/documents/tree-detection/wandb/run-20240707_143328-gvpbuqfh
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run pleasant-star-16
-wandb: ⭐️ View project at https://wandb.ai/julianzabbarov/tree_detection-sauen
-wandb: 🚀 View run at https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/gvpbuqfh
-INFO:torch.distributed.nn.jit.instantiator:Created a temporary directory at /tmp/tmpzk3ukalo
-INFO:torch.distributed.nn.jit.instantiator:Writing /tmp/tmpzk3ukalo/_remote_module_non_scriptable.py
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-HPU available: False, using: 0 HPUs
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/logger_connector/logger_connector.py:75: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `pytorch_lightning` package, due to potential conflicts with other packages in the ML ecosystem. For this reason, `logger=True` will use `CSVLogger` as the default logger, unless the `tensorboard` or `tensorboardX` packages are found. Please `pip install lightning[extra]` or one of them to enable TensorBoard support by default
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/lightning_fabric/connector.py:571: `precision=16` is supported for historical reasons but its usage is discouraged. Please set your precision to 16-mixed instead!
-Using 16bit Automatic Mixed Precision (AMP)
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA A100-SXM4-80GB') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/pytorch_lightning/loggers/wandb.py:396: There is a wandb run already in progress and newly created instances of `WandbLogger` will reuse this run. If this is not desired, call `wandb.finish()` before instantiating `WandbLogger`.
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-
-  | Name       | Type                  | Params | Mode 
--------------------------------------------------------------
-0 | model      | RetinaNet             | 32.1 M | train
-1 | iou_metric | IntersectionOverUnion | 0      | train
-2 | mAP_metric | MeanAveragePrecision  | 0      | train
--------------------------------------------------------------
-31.9 M    Trainable params
-222 K     Non-trainable params
-32.1 M    Total params
-128.592   Total estimated model params size (MB)
-SLURM auto-requeueing enabled. Setting signal handlers.
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:424: The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=7` in the `DataLoader` to improve performance.
-`Trainer.fit` stopped: `max_epochs=10` reached.
-  0%|          | 0/1 [00:00<?, ?it/s]LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-SLURM auto-requeueing enabled. Setting signal handlers.
-/hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:424: The 'predict_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=7` in the `DataLoader` to improve performance.
-100%|██████████| 1/1 [00:02<00:00,  2.90s/it]100%|██████████| 1/1 [00:02<00:00,  2.90s/it]
-wandb: - 0.014 MB of 0.014 MB uploadedwandb: \ 0.014 MB of 0.014 MB uploadedwandb: | 0.014 MB of 0.014 MB uploadedwandb: / 0.017 MB of 0.028 MB uploaded (0.002 MB deduped)wandb: - 0.028 MB of 0.028 MB uploaded (0.002 MB deduped)wandb: 🚀 View run pleasant-star-16 at: https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/gvpbuqfh
-wandb: ⭐️ View project at: https://wandb.ai/julianzabbarov/tree_detection-sauen
-wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20240707_143328-gvpbuqfh/logs
-wandb: WARNING The new W&B backend becomes opt-out in version 0.18.0; try it out with `wandb.require("core")`! See https://wandb.me/wandb-core for more information.
+Traceback (most recent call last):
+  File "/hpi/fs00/home/julian.zabbarov/documents/tree-detection/src/training/finetune.py", line 37, in <module>
+    raster = os.listdir(config.training.images_folder)[1]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'experiments/sauen/labels/predicted_120m_1140px_3510b2'
+srun: error: gx21: task 0: Exited with exit code 1
