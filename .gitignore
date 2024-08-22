@@ -1,5 +1,12 @@
 /data
+/wandb
 **/lightning_logs
 **/predicted_images
 **.csv
 **.png
+**.pyc
+**.log
+**.wandb
+**.json
+**.yaml
+**.txt

@@ -5,22 +5,43 @@ from src.configs.config_definition import ExportConfig
 import pandas as pd
 
 
+def create_folder_if_not_exists(folder: str):
+    if not os.path.exists(folder):
+        print("Creating folder:", folder, "...")
+        os.makedirs(folder)
+
+
 def export_predictions_as_csv(
     pred_df: pd.DataFrame, export_config: ExportConfig, image_name: str
 ) -> None:
-    # export predictions
+    # replace tif with png in image path to match annotation format
+    if export_config.image_format == "PNG":
+        pred_df["image_path"] = pred_df["image_path"].str.replace(".tif", ".png")
+
+    # sort by label
     if export_config.sort_values:
         pred_df.sort_values(
             by=export_config.sort_values,
             inplace=True,
         )  # .reset_index(drop=True)
         pred_df = pred_df.reset_index(drop=True)
+
+    # add index as label suffix
     if export_config.index_as_label_suffix:
         pred_df["label"] = pred_df["label"] + pred_df.index.astype(str)
+
+    # reorder columns
     if export_config.column_order:
         pred_df = pred_df[export_config.column_order]
+
+    # create export folder if not exists
+    export_folder = os.path.join(os.getcwd(), export_config.annotations_path)
+    if not os.path.exists(export_folder):
+        os.mkdir(export_folder)
+        
+    # export to csv
     pred_df.to_csv(
-        os.path.join(os.getcwd(), export_config.annotations_path, image_name + ".csv"),
+        os.path.join(os.getcwd(), export_config.annotations_path, image_name.split(".")[0] + ".csv"),
         index=False,
     )
 
@@ -44,8 +65,6 @@ def export_predictions_as_xml(
 
     path_element = ET.SubElement(annotation, "path")
     path_element.text = f"{image_folder}{image_name}"
-
-    # source = ET.SubElement(annotation, "source")
 
     size = ET.SubElement(annotation, "size")
     width_element = ET.SubElement(size, "width")
@@ -77,16 +96,16 @@ def export_predictions_as_xml(
         bndbox = ET.SubElement(object_element, "bndbox")
 
         xmin = ET.SubElement(bndbox, "xmin")
-        xmin.text = str(row["xmin"])# * width / 400)
+        xmin.text = str(row["xmin"])
 
         xmax = ET.SubElement(bndbox, "xmax")
-        xmax.text = str(row["xmax"])# * width / 400)
+        xmax.text = str(row["xmax"])
 
         ymin = ET.SubElement(bndbox, "ymin")
-        ymin.text = str(row["ymin"])# * height / 400)
+        ymin.text = str(row["ymin"])
 
         ymax = ET.SubElement(bndbox, "ymax")
-        ymax.text = str(row["ymax"])# * height / 400)
+        ymax.text = str(row["ymax"])
 
     tree = ET.ElementTree(annotation)
     xml_file = image_name.replace(".tif", ".xml")
