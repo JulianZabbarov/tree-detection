@@ -44,7 +44,7 @@ def create_feature(tree):
             "height": tree["height"],
             "crownRadius": tree["crownRadius"],
             "crownArea": tree["crownArea"],
-            "deletionReason": tree["deletionReason"],
+            # "deletionReason": tree["deletionReason"],
             "breastHeightCircle": {
                 "radius": tree["breastHeightCircle"]["radius"],
                 "x": breast_x,
