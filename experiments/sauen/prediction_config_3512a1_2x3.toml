@@ -1,0 +1,22 @@
+[data]
+path_to_images = "data/sauen/tiles/120m_1240px_3512a1_2x3_merged" # relative path to image folder
+predict_tile = true # whether images are tiles or already crops
+tile_size = 1240 # size of individual tiles in pixels (should correspond to 40m)
+
+[export]
+annotations_path = "experiments/sauen/predictions/predictions_120m_1240px_3512a1_2x3" # export folder for annotations
+image_path = "experiments/sauen/predictions/predictions_120m_1240px_3512a1_2x3" # export folder of images in png for annotating in RectLabel
+image_size = 3720 # size of images to label, only provide if data.predict_tile = false
+type = "per_image" # alternative "combined"
+annotations_format = "XML" # option: "CSV" or "XML"
+image_format = "PNG" # image format of exported image to label
+sort_values = ["ymax", "xmin"] # relevant for CSV only
+column_order = ["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"] # relevant for CSV only
+index_as_label_suffix = true
+
+[visualization]
+image_folder = "experiments/sauen/predictions/predictions_120m_1240px_3512a1_2x3" # relative path to image folder
+image_format = "png"
+predictions_folder = "experiments/sauen/predictions/predictions_120m_1240px_3512a1_2x3" # relative path to folder with predictions
+label_folder = "experiments/sauen/labels/edited_annotations_120m_1240px_3512a1_2x3" # relative path to folder with labels
+export_folder = "experiments/sauen/figures/predictions_120m_1240px_3512a1_2x3" # relative path to folder where exported images are saved

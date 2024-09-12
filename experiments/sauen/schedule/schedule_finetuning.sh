@@ -4,7 +4,7 @@
 #SBATCH --mem=20G
 #SBATCH --cpus-per-gpu=8
 #SBATCH --account=renard
-#SBATCH --partition=sorcery # cauldron # sorcery when training
+#SBATCH --partition=sorcery # alternative: cauldron # sorcery when training
 #SBATCH --time=2-00:00:00
 #SBATCH --chdir=/hpi/fs00/home/julian.zabbarov/documents/tree-detection
 #SBATCH --mail-type=ALL
@@ -16,7 +16,6 @@
 echo "START"
 source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
-# export WANDB_API_KEY="565b0acd482690fc7eecd3eaec6f503f55bfa969"
 srun python src/training/finetune.py -c experiments/sauen/finetuning_config.toml
 echo "FINISHED"
 exit 0
