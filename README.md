@@ -56,7 +56,7 @@ python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments
 
 ##### Pre-processing tree locations extracted from point clouds
 
-Pipeline overview: tree locations -> cluster tree locations (files in json) -> extract bboxs (files in geojson) -> filter bboxs (files in geojson).
+Pipeline overview: tree locations -> cluster tree locations (files in json) -> extract bboxs (files in geojson) -> filter bboxs (files in geojson) -> tree locations with bounding boxes.
 
 This repository provides the functionality to create bounding boxes from json data that contains tree locations extracted from point clouds. As the tree locations of individual trees can appear multiple times in the data, the following script allows you to cluster tree locations.
 ```

@@ -78,7 +78,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Filter tree data based on height and bounding box overlap.")
     parser.add_argument("-f", "--file", required=True, help="Relative path to the GeoJSON file containing tree data.")
     parser.add_argument("-t", "--max_iou", type=float, default=0.25, help="Maximum IoU threshold for bounding box overlap. Default is 0.25.")
-    parser.add_argument("-s", "--min_height", type=float, default=0, help="Minimum height for a tree to be considered. Default is 3 meters.")
+    parser.add_argument("-s", "--min_height", type=float, default=3, help="Minimum height for a tree to be considered. Default is 3 meters.")
     
     # Parse arguments
     args = parser.parse_args()

@@ -16,9 +16,9 @@ def create_bounding_box(center_x, center_y, radius):
 
 
 # Function to create a GeoJSON Feature for each tree
-def create_feature(tree):
+def create_feature(tree, epsg_format):
     # Initialize the transformer to convert coordinates to EPSG:4326
-    transformer = Transformer.from_crs("EPSG:25833", "EPSG:4326", always_xy=True)
+    transformer = Transformer.from_crs("EPSG:25833", epsg_format, always_xy=True)
 
     # Transform ground and breast height circle centers
     ground_x, ground_y = transformer.transform(
@@ -34,10 +34,10 @@ def create_feature(tree):
     )
 
     # Transform the bounding box coordinates to EPSG:4326
-    bbox_transformed = [transformer.transform(x, y) for x, y in bbox]
+    # bbox_transformed = [transformer.transform(x, y) for x, y in bbox]
 
     return geojson.Feature(
-        geometry=geojson.Polygon([bbox_transformed]),
+        geometry=geojson.Polygon([bbox]),
         properties={
             "treeId": tree["treeId"],
             "groundHeight": tree["groundHeight"],
@@ -63,6 +63,7 @@ def main():
     # Parse the folder name with tree locations
     parser = argparse.ArgumentParser(description="Convert JSON tree data to GeoJSON")
     parser.add_argument("-f", "--folder", help="Folder name with tree locations")
+    parser.add_argument("-e", "--epsg", default="EPSG:25833", help="EPSG code for the output GeoJSON")
     args = parser.parse_args()
 
     folder = os.path.join(Path(os.getcwd()), Path(args.folder))
@@ -73,7 +74,7 @@ def main():
                 data = json.load(f)
 
                 # Create GeoJSON Features for all trees
-                features = [create_feature(tree) for tree in data["trees"]]
+                features = [create_feature(tree, args.epsg) for tree in data["trees"]]
 
                 # Create a GeoJSON FeatureCollection
                 feature_collection = geojson.FeatureCollection(features)

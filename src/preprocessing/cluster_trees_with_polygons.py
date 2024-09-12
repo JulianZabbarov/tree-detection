@@ -146,7 +146,9 @@ def main():
     clustered_coords_epsg25833 = transform_coordinates_back_to_epsg25833(clustered_coords)
 
     # Export merged tree locations and attributes to JSON
-    export_path = os.path.join(folder, "treeDetails-20230720_Sauen_PLS_clustered_with_polygon.json")
+    if not os.path.exists(os.path.join(folder, "with_polygons")):
+        os.makedirs(os.path.join(folder, "with_polygons"))
+    export_path = os.path.join(folder, "with_polygons", "treeDetails-20230720_Sauen_PLS_clustered_with_polygon.json")
     export_to_json(clustered_coords_epsg25833, tree_attributes_merged, merged_polygons, output_file=export_path)
 
 if __name__ == "__main__":
