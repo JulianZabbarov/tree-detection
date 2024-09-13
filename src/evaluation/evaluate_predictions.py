@@ -45,8 +45,12 @@ with warnings.catch_warnings():
         iou_threshold=float(args.iou_threshold),
     )
 
+f1 = 2 * (results["box_precision"] * results["box_recall"]) / (
+    results["box_precision"] + results["box_recall"]
+)
+
 print(
-    "Precision:\t{precision}\nRecall:\t\t{recall}".format(
-        precision=results["box_precision"], recall=results["box_recall"]
+    "Precision:\t{precision}\nRecall:\t\t{recall}\nF1:\t\t{f1}".format(
+        precision=results["box_precision"], recall=results["box_recall"], f1=f1
     )
 )

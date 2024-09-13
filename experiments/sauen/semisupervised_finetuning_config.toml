@@ -14,7 +14,7 @@ tile_size = 1140 # size of individual tiles in pixels (should correspond to 40m)
 [export]
 annotations_path = "experiments/sauen/predictions/semisupervised_finetuning_predictions_120m_1140px_3510b2" # export folder for prediction
 image_path = "experiments/sauen/predictions/semisupervised_finetuning_predictions_120m_1140px_3510b2" # export folder of images in png for annotating in RectLabel
-image_size = 3720 # size of images to label, only provide if data.predict_tile = false
+image_size = 3420 # size of images to label, only provide if data.predict_tile = false
 type = "per_image" # alternative "combined"
 annotations_format = "CSV" # alternative "CSV"
 image_format = "PNG" # image format of exported image for labelling
