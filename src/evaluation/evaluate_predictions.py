@@ -34,7 +34,6 @@ args = parser.parse_args()
 pred = pd.read_csv(os.path.join(os.getcwd(), args.pred))
 ann = pd.read_csv(os.path.join(os.getcwd(), args.ann))
 
-print("Evaluating predictions ...")
 # ignore deprecated warnings from pandas raised by deepforest.IoU (line 113: iou_df = pd.concat(iou_df))
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")

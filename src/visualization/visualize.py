@@ -52,7 +52,7 @@ if __name__ == "__main__":
         image = plot_predictions(
             image=image,
             df=labels,
-            color=(0, 165, 255), # orange
+            color=(0, 165, 255), # blue
             thickness=6,
         )
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         image = plot_predictions(
             image=image,
             df=predictions,
-            color=(255, 89, 0), # blue
+            color=(255, 89, 0), # orange
             thickness=4
         )
 

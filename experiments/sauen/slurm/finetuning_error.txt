@@ -1,4 +1,3 @@
-INFO:albumentations.check_version:A new version of Albumentations is available: 1.4.15 (you have 1.4.11). Upgrade using: pip install --upgrade albumentations
 /hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/deepforest/utilities.py:351: UserWarning: Annotations file contained non-integer coordinates. These coordinates were rounded to nearest int. All coordinates must correspond to pixels in the image coordinate system. If you are attempting to use projected data, first convert it into image coordinates see FAQ for suggestions.
   warnings.warn(
 /hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/rasterio/__init__.py:304: NotGeoreferencedWarning: Dataset has no geotransform, gcps, or rpcs. The identity matrix will be returned.
@@ -7,13 +6,11 @@ wandb: Currently logged in as: julianzabbarov. Use `wandb login --relogin` to fo
 wandb: wandb version 0.18.0 is available!  To upgrade, please run:
 wandb:  $ pip install wandb --upgrade
 wandb: Tracking run with wandb version 0.17.4
-wandb: Run data is saved locally in /hpi/fs00/home/julian.zabbarov/documents/tree-detection/wandb/run-20240913_092745-yvj8jl0i
+wandb: Run data is saved locally in /hpi/fs00/home/julian.zabbarov/documents/tree-detection/wandb/run-20240913_155947-iidx8q0h
 wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run rosy-snowball-18
+wandb: Syncing run lucky-snowball-22
 wandb: ⭐️ View project at https://wandb.ai/julianzabbarov/tree_detection-sauen
-wandb: 🚀 View run at https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/yvj8jl0i
-INFO:torch.distributed.nn.jit.instantiator:Created a temporary directory at /tmp/tmprqp27vez
-INFO:torch.distributed.nn.jit.instantiator:Writing /tmp/tmprqp27vez/_remote_module_non_scriptable.py
+wandb: 🚀 View run at https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/iidx8q0h
 GPU available: True (cuda), used: True
 TPU available: False, using: 0 TPU cores
 HPU available: False, using: 0 HPUs
@@ -42,9 +39,9 @@ SLURM auto-requeueing enabled. Setting signal handlers.
   0%|          | 0/1 [00:00<?, ?it/s]LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 SLURM auto-requeueing enabled. Setting signal handlers.
 /hpi/fs00/home/julian.zabbarov/software/miniconda3/envs/aavsd/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:424: The 'predict_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=7` in the `DataLoader` to improve performance.
-100%|██████████| 1/1 [00:03<00:00,  3.72s/it]100%|██████████| 1/1 [00:03<00:00,  3.72s/it]
-wandb: - 0.009 MB of 0.009 MB uploadedwandb: \ 0.009 MB of 0.009 MB uploadedwandb: | 0.009 MB of 0.009 MB uploadedwandb: / 0.013 MB of 0.023 MB uploaded (0.002 MB deduped)wandb: - 0.013 MB of 0.023 MB uploaded (0.002 MB deduped)wandb: 🚀 View run rosy-snowball-18 at: https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/yvj8jl0i
+100%|██████████| 1/1 [00:03<00:00,  3.36s/it]100%|██████████| 1/1 [00:03<00:00,  3.36s/it]
+wandb: - 0.009 MB of 0.009 MB uploadedwandb: \ 0.009 MB of 0.019 MB uploadedwandb: | 0.019 MB of 0.019 MB uploadedwandb: 🚀 View run lucky-snowball-22 at: https://wandb.ai/julianzabbarov/tree_detection-sauen/runs/iidx8q0h
 wandb: ⭐️ View project at: https://wandb.ai/julianzabbarov/tree_detection-sauen
-wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20240913_092745-yvj8jl0i/logs
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240913_155947-iidx8q0h/logs
 wandb: WARNING The new W&B backend becomes opt-out in version 0.18.0; try it out with `wandb.require("core")`! See https://wandb.me/wandb-core for more information.

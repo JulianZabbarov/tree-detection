@@ -7,6 +7,8 @@ import pandas as pd
 import wandb
 from deepforest import utilities, main, preprocess
 from pytorch_lightning.loggers import WandbLogger
+import torch
+import numpy as np
 
 from src.utils.imports import load_config
 from src.prediction.run_tree_detection import start_prediction
@@ -20,7 +22,16 @@ def transform_annotations(folder: str):
         if file.endswith(".xml"):
             annotations = load_annotations(os.path.join(folder, file))
             annotations["label"] = "Tree"
-            annotations["image_path"] = annotations["image_path"].str.replace("tif", "png")
+            annotations["image_path"] = annotations["image_path"].str.replace(
+                "tif", "png"
+            )
+            print(annotations.head())
+            # drop all rows where xmin == xmax or ymin == ymax
+            # these are invalid annotations
+            annotations = annotations[
+               (annotations["xmin"] != annotations["xmax"])
+              & (annotations["ymin"] != annotations["ymax"])
+            ] 
             annotations.to_csv(
                 os.path.join(folder, str(file).replace(".xml", ".csv")),
                 index=False,
@@ -39,6 +50,7 @@ def get_rastered_annotations(path_to_images: str, path_to_annotations: str):
     annotation_filename = None
     for file in os.listdir(path_to_annotations):
         print(file)
+        print(raster)
         if file.endswith(".csv") and file.startswith(raster.strip(".png")):
             annotation_filename = file
             break
@@ -95,6 +107,10 @@ if __name__ == "__main__":
     # wandb.init(project="tree_detection-sauen", entity="julianzabbarov")
 
     print("\nStarting training ...")
+
+    # set seeds for reproducibility
+    np.random.seed(42)
+    torch.manual_seed(42)
 
     # configure model
     model = main.deepforest()

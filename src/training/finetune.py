@@ -7,6 +7,8 @@ import pandas as pd
 import wandb
 from deepforest import utilities, main, preprocess
 from pytorch_lightning.loggers import WandbLogger
+import torch
+import numpy as np
 
 from src.utils.imports import load_config
 from src.prediction.run_tree_detection import start_prediction
@@ -59,6 +61,10 @@ if __name__ == "__main__":
     wandb.init(project='tree_detection-sauen', entity='julianzabbarov')
 
     print("\nStarting training ...")
+
+    # set seeds for reproducibility
+    np.random.seed(42)
+    torch.manual_seed(42)
 
     # configure model
     model = main.deepforest()
