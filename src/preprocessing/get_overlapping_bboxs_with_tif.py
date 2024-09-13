@@ -27,7 +27,7 @@ def create_xml_bbox(xmin, ymin, xmax, ymax):
     """Create XML structure for a bounding box."""
     obj = ET.Element('object')
     name = ET.SubElement(obj, 'name')
-    name.text = 'AddedTree'
+    name.text = 'Tree'
 
     pose = ET.SubElement(obj, 'pose')
     pose.text = 'Unspecified'
@@ -99,6 +99,10 @@ def filter_bounding_boxes_to_xml(tif_path, geojson_path, output_xml, folder_name
                     continue  # Skip this bounding box if conversion fails
                 
                 # Create the XML object for the bounding box
+                if xmin_pixel > xmax_pixel:
+                    xmin_pixel, xmax_pixel = xmax_pixel, xmin_pixel
+                if ymin_pixel > ymax_pixel:
+                    ymin_pixel, ymax_pixel = ymax_pixel, ymin_pixel
                 xml_obj = create_xml_bbox(xmin_pixel, ymin_pixel, xmax_pixel, ymax_pixel)
                 xml_objects.append(xml_obj)
 
