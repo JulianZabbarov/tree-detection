@@ -6,6 +6,8 @@ class TrainingConfig:
     annotations_folder: str
     images_folder: str
     patch_size: int
+    unsupervised_annotations_folder: str = None
+    unsupervised_images_folder: str = None
     num_epochs: int = 10
 
 
