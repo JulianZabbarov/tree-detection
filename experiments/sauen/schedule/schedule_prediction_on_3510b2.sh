@@ -10,12 +10,12 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=julian.zabbarov@student.hpi.de
 #SBATCH --verbose
-#SBATCH --output=/hpi/fs00/home/julian.zabbarov/documents/tree-detection/experiments/sauen/slurm/prediction.txt
-#SBATCH --error=/hpi/fs00/home/julian.zabbarov/documents/tree-detection/experiments/sauen/slurm/prediction_error.txt
+#SBATCH --output=/hpi/fs00/home/julian.zabbarov/documents/tree-detection/experiments/sauen/slurm/prediction_on_3510b2.txt
+#SBATCH --error=/hpi/fs00/home/julian.zabbarov/documents/tree-detection/experiments/sauen/slurm/prediction_on_3510b2_error.txt
 
 echo "START"
 source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
-srun python src/prediction/run_tree_detection.py -c experiments/sauen/prediction_config.toml
+srun python src/prediction/run_tree_detection.py -c experiments/sauen/configs/prediction_on_3510b2.toml
 echo "FINISHED"
 exit 0

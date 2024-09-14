@@ -14,11 +14,16 @@ import tomllib
 from PIL import Image
 from dacite import from_dict
 from src.configs.config_definition import PipelineConfig
-
+import torch
 
 from argparse import ArgumentParser
 
 from src.utils import export
+
+# set seeds for reproducibility
+np.random.seed(42)
+torch.manual_seed(42)
+
 
 def get_config():
     parser = ArgumentParser()
@@ -41,25 +46,35 @@ class TreeDataset(Dataset):
         self, config, transform: bool = True, target_transform: bool = False
     ):
         self.config = config
-        self.img_names = os.listdir(os.getcwd() + "/" + self.config.data.path_to_images)
+        self.img_names = os.listdir(
+            os.getcwd() + "/" + self.config.data.path_to_images
+        )
+        # filter out non-image files
+        self.img_names = [img for img in self.img_names if img.endswith(".tif")]
         self.transform = transform
         self.target_transform = target_transform
 
     def __len__(self):
-        return len(os.listdir(os.getcwd() + "/" + self.config.data.path_to_images))
+        return len(self.img_names)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(os.getcwd(), self.config.data.path_to_images, self.img_names[idx])
+        print(f"Image names: {self.img_names}")
+        img_path = os.path.join(
+            os.getcwd(), self.config.data.path_to_images, self.img_names[idx]
+        )
+        print(f"Loading image: {img_path}")
         image_array = np.array(imread(img_path))[:, :, :3].astype(np.uint8)
         image = Image.fromarray(image_array)
 
-        if not os.path.exists(os.path.join(os.getcwd(), self.config.export.image_path)):
+        if not os.path.exists(
+            os.path.join(os.getcwd(), self.config.export.image_path)
+        ):
             os.mkdir(os.path.join(os.getcwd(), self.config.export.image_path))
         image.save(
             f"{os.getcwd()}/{self.config.export.image_path}/{self.img_names[idx].replace('.tif', '.png')}",
             type="PNG",
         )
-        
+
         if self.transform:
             # resize image to 400x400, default for deepforest
             image = image.resize((400, 400))
@@ -86,16 +101,20 @@ def start_prediction(model, config):
             config, transform=False, target_transform=False
         )
 
-    all_predictions = pd.DataFrame() if config.export.type == "combined" else None
+    all_predictions = (
+        pd.DataFrame() if config.export.type == "combined" else None
+    )
 
     # predict images
-    print("\nRunning predictions ...")
+    print(f"\nRunning predictions for {len(tree_dataset)} image(s) ...")
     for img_idx in tqdm(range(len(tree_dataset))):
         if config.data.predict_tile:
-            pred = model.predict_tile(image=tree_dataset.__getitem__(img_idx).astype(np.float32),
-                                return_plot = False,
-                                patch_size=config.data.tile_size,
-                                patch_overlap=0.1)
+            pred = model.predict_tile(
+                image=tree_dataset.__getitem__(img_idx).astype(np.float32),
+                return_plot=False,
+                patch_size=config.data.tile_size,
+                patch_overlap=0.1,
+            )
         else:
             pred = model.predict_image(
                 image=tree_dataset.__getitem__(img_idx).astype(np.float32),
@@ -112,7 +131,7 @@ def start_prediction(model, config):
                     image_folder=config.data.path_to_images,
                     export_config=config.export,
                     image_size=config.export.image_size,
-                    scale_annotations=not(config.data.predict_tile),
+                    scale_annotations=not (config.data.predict_tile),
                 )
             if config.export.annotations_format == "CSV":
                 export.export_predictions_as_csv(
@@ -120,7 +139,6 @@ def start_prediction(model, config):
                     export_config=config.export,
                     image_name=tree_dataset.__getname__(img_idx),
                 )
-
 
     if all_predictions is not None:
         if config.export.annotations_format == "CSV":
@@ -135,6 +153,7 @@ def start_prediction(model, config):
             export=os.path.join(os.getcwd(), config.export.annotations_path)
         )
     )
+
 
 if __name__ == "__main__":
     config = get_config()

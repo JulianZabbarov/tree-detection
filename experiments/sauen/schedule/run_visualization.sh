@@ -1,0 +1,1 @@
+python src/visualization/visualize.py -c experiments/sauen/configs/visualize_computed_annotations.toml

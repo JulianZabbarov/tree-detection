@@ -1,12 +1,15 @@
 import os
 import sys
+
 sys.path.append(os.path.abspath(os.getcwd()))
 
-from src.utils.imports import load_config
+from src.utils.imports import load_pipeline_config
 from deepforest import utilities
+
 
 def get_annotations(path: str):
     return utilities.xml_to_annotations(path)
+
 
 def convert_xml_to_csv(folder_path: str):
     for file in os.listdir(folder_path):

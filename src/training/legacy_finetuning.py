@@ -10,7 +10,7 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 import numpy as np
 
-from src.utils.imports import load_config
+from src.utils.imports import load_pipeline_config
 from src.prediction.run_tree_detection import start_prediction
 
 
@@ -20,7 +20,7 @@ def get_annotations(path: str):
 
 if __name__ == "__main__":
     # load config file
-    config = load_config()
+    config = load_pipeline_config()
 
     print("\nLoading data ...")
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     )
 
     logger = WandbLogger(project="tree-detection_sauen")
-    wandb.init(project='tree_detection-sauen', entity='julianzabbarov')
+    wandb.init(project="tree_detection-sauen", entity="julianzabbarov")
 
     print("\nStarting training ...")
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     model.config["train"]["root_dir"] = os.path.dirname(
         os.path.join(crop_dir, annotation)
     )
-    
+
     model.create_trainer(precision=16, log_every_n_steps=1, logger=logger)
     model.trainer.fit(model)
 
@@ -86,5 +86,3 @@ if __name__ == "__main__":
 
     # save model
     # model.save(os.path.join(os.getcwd(), "experiments/sauen/saved_models/finetuned_model.pth"))
-
-    

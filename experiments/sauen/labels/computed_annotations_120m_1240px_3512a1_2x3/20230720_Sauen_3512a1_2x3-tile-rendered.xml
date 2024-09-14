@@ -5,7 +5,7 @@
     <size>
         <width>3720</width>
         <height>2480</height>
-        <depth>4</depth>
+        <depth>3</depth>
     </size>
     <object>
         <name>AddedTree</name>

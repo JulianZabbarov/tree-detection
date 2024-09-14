@@ -1,6 +1,6 @@
 import os
 import sys
-
+import time
 sys.path.append(os.path.abspath(os.getcwd()))
 
 import pandas as pd
@@ -10,11 +10,22 @@ from pytorch_lightning.loggers import WandbLogger
 import torch
 import numpy as np
 
-from src.utils.imports import load_config
+from src.utils.imports import load_pipeline_config
 from src.prediction.run_tree_detection import start_prediction
+
 
 def load_annotations(path: str):
     return utilities.xml_to_annotations(path)
+
+
+def clean_up():
+    # delete crop directories
+    if (
+        config.training.unsupervised_annotations_folder
+        and config.training.unsupervised_images_folder
+    ):
+        os.system(f"rm -r {unsupervised_crop_dir}")
+    os.system(f"rm -r {crop_dir}")
 
 
 def transform_annotations(folder: str):
@@ -29,9 +40,9 @@ def transform_annotations(folder: str):
             # drop all rows where xmin == xmax or ymin == ymax
             # these are invalid annotations
             annotations = annotations[
-               (annotations["xmin"] != annotations["xmax"])
-              & (annotations["ymin"] != annotations["ymax"])
-            ] 
+                (annotations["xmin"] != annotations["xmax"])
+                & (annotations["ymin"] != annotations["ymax"])
+            ]
             annotations.to_csv(
                 os.path.join(folder, str(file).replace(".xml", ".csv")),
                 index=False,
@@ -44,25 +55,29 @@ def get_rastered_annotations(path_to_images: str, path_to_annotations: str):
     print(os.listdir(path_to_images))
     for file in os.listdir(path_to_images):
         if file.endswith("png"):
-            raster = file
+            image_name = file
             break
 
     annotation_filename = None
     for file in os.listdir(path_to_annotations):
         print(file)
-        print(raster)
-        if file.endswith(".csv") and file.startswith(raster.strip(".png")):
+        print(image_name)
+        if file.endswith(".csv") and file.startswith(image_name.strip(".png")):
             annotation_filename = file
             break
 
     # create crops for the raster
-    crop_dir = os.path.join(os.getcwd(), path_to_images, "tiles")
+    crop_dir = os.path.join(
+        os.getcwd(),
+        path_to_annotations,
+        f"annotations_for_subtiles-run_at_{str(round(time.time()*1000))}",
+    )
     if not os.path.exists(crop_dir):
         os.makedirs(crop_dir)
-    print(os.path.join(path_to_images, raster))
+    print(os.path.join(path_to_images, image_name))
     print(os.path.join(path_to_annotations, annotation_filename))
     _ = preprocess.split_raster(
-        path_to_raster=os.path.join(path_to_images, raster),
+        path_to_raster=os.path.join(path_to_images, image_name),
         annotations_file=os.path.join(path_to_annotations, annotation_filename),
         save_dir=crop_dir,
         patch_size=config.training.patch_size,
@@ -73,13 +88,15 @@ def get_rastered_annotations(path_to_images: str, path_to_annotations: str):
 
 if __name__ == "__main__":
     # load config file
-    config = load_config()
+    config = load_pipeline_config()
 
     print("\nLoading data ...")
 
     # transform annotations from xml to csv
     transform_annotations(folder=config.training.annotations_folder)
-    transform_annotations(folder=config.training.unsupervised_annotations_folder)
+    transform_annotations(
+        folder=config.training.unsupervised_annotations_folder
+    )
 
     # get rastered annotations for unsupervised annotations
     if (
@@ -93,8 +110,8 @@ if __name__ == "__main__":
             )
         )
     else:
-        raise ValueError(
-            "Unsupervised annotations or images folder is not provided but required to run this script."
+        print(
+            "INFO: Unsupervised annotations or images folder is not provided. Single-stage fine-tuning will be performed."
         )
 
     # get rastered annotations for hand-labelled annotations
@@ -119,15 +136,23 @@ if __name__ == "__main__":
     model.config["train"]["epochs"] = config.training.num_epochs
     model.config["save-snapshot"] = False
 
-    # set training data for unsupervised annotations
-    model.config["train"]["csv_file"] = os.path.join(
-        unsupervised_crop_dir, unsupervised_annotation_filename
-    )
-    model.config["train"]["root_dir"] = os.path.dirname(
-        os.path.join(unsupervised_crop_dir, unsupervised_annotation_filename)
-    )
-    model.create_trainer(precision=16, log_every_n_steps=1)# , logger=logger)
-    model.trainer.fit(model)
+    if (
+        config.training.unsupervised_annotations_folder
+        and config.training.unsupervised_images_folder
+    ):
+        # set training data for unsupervised annotations
+        model.config["train"]["csv_file"] = os.path.join(
+            unsupervised_crop_dir, unsupervised_annotation_filename
+        )
+        model.config["train"]["root_dir"] = os.path.dirname(
+            os.path.join(
+                unsupervised_crop_dir, unsupervised_annotation_filename
+            )
+        )
+        model.create_trainer(
+            precision=16, log_every_n_steps=1
+        )  # , logger=logger)
+        model.trainer.fit(model)
 
     # set training data for hand-labelled annotations
     model.config["train"]["csv_file"] = os.path.join(
@@ -136,12 +161,15 @@ if __name__ == "__main__":
     model.config["train"]["root_dir"] = os.path.dirname(
         os.path.join(crop_dir, annotation_filename)
     )
-    model.create_trainer(precision=16, log_every_n_steps=1)# , logger=logger)
+    model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
     model.trainer.fit(model)
 
+    # start prediction on target data
     print("\nPredicting ...")
-
     start_prediction(model, config=config)
+
+    # clean up crop directories
+    clean_up()
 
     # save model
     # model.save(os.path.join(os.getcwd(), "experiments/sauen/saved_models/finetuned_model.pth"))

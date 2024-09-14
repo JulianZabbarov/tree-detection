@@ -40,10 +40,12 @@ def export_predictions_as_csv(
         os.mkdir(export_folder)
         
     # export to csv
+    export_path = os.path.join(os.getcwd(), export_config.annotations_path, image_name.split(".")[0] + ".csv")
     pred_df.to_csv(
-        os.path.join(os.getcwd(), export_config.annotations_path, image_name.split(".")[0] + ".csv"),
+        export_path,
         index=False,
     )
+    print(f"Exported {image_name} to {export_path}.")
 
 
 def export_predictions_as_xml(
