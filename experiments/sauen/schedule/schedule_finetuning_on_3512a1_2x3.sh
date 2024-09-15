@@ -16,6 +16,6 @@
 echo "START"
 source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
-srun python src/training/finetuning.py -c experiments/sauen/configs/finetuning_on_3512a1_2x3.toml
+srun python src/training/finetuning.py -c experiments/sauen/configs/finetuning_on_3512a1_2x3.toml -s 42
 echo "FINISHED"
 exit 0

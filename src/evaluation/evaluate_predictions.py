@@ -42,6 +42,9 @@ args = parser.parse_args()
 pred = pd.read_csv(os.path.join(os.getcwd(), args.pred))
 ann = pd.read_csv(os.path.join(os.getcwd(), args.ann))
 absolute_export_folder_path = os.path.join(os.getcwd(), args.export_folder_path)
+if not os.path.exists(absolute_export_folder_path):
+    os.makedirs(absolute_export_folder_path)
+
 
 # ignore deprecated warnings from pandas raised by deepforest.IoU (line 113: iou_df = pd.concat(iou_df))
 with warnings.catch_warnings():
@@ -79,7 +82,11 @@ metrics.append({"metric": "f1", "score": results["f1"]})
 df = pd.DataFrame.from_dict(metrics)
 
 # save dict as csv
-file_name = args.pred.split("/")[-2]
+if ("/train/" in args.pred) or ("/test/" in args.pred):
+    file_name = args.pred.split("/")[-3]
+else:
+    file_name = args.pred.split("/")[-2]
+
 df.to_csv(
     os.path.join(absolute_export_folder_path, file_name + ".csv"), index=False
 )

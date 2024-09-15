@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+import copy
+
 sys.path.append(os.path.abspath(os.getcwd()))
 
 import pandas as pd
@@ -12,23 +14,66 @@ import numpy as np
 
 from src.utils.imports import load_pipeline_config
 from src.prediction.run_tree_detection import start_prediction
+from src.configs.config_definition import PipelineConfig
 
 
 def load_annotations(path: str):
+    """
+    Load annotations from xml file
+    """
     return utilities.xml_to_annotations(path)
 
 
-def clean_up():
-    # delete crop directories
-    if (
-        config.training.unsupervised_annotations_folder
-        and config.training.unsupervised_images_folder
-    ):
-        os.system(f"rm -r {unsupervised_crop_dir}")
-    os.system(f"rm -r {crop_dir}")
+def adjust_export_paths(config: PipelineConfig, added_subfolder_name: str):
+    config.export.annotations_path = (
+        config.export.annotations_path + "/" + added_subfolder_name
+    )
+    if not os.path.exists(config.export.annotations_path):
+        os.makedirs(config.export.annotations_path)
+    config.export.image_path = (
+        config.export.image_path + "/" + added_subfolder_name
+    )
+    if not os.path.exists(config.export.image_path):
+        os.makedirs(config.export.image_path)
+    return config
+
+
+def evaluate_model_on_train_set(model, config: PipelineConfig):
+    """
+    Evaluate model on training data. Adjusts config to evaluate model on training data.
+
+    Args:
+        model: deepforest model
+        config: pipeline config
+    """
+    config.data.path_to_images = config.training.images_folder.strip("/png")
+    print(
+        "INFO: Training evaluation: path_to_images: ",
+        config.data.path_to_images,
+    )
+    config.data.tile_size = config.training.patch_size
+    print("INFO: Training evaluation: tile_size: ", config.data.tile_size)
+
+    adjust_export_paths(config, added_subfolder_name="train")
+    print(
+        "INFO: Training evaluation: export path: ",
+        config.export.annotations_path,
+    )
+    print(
+        "INFO: Training evaluation: export image path: ",
+        config.export.image_path,
+    )
+
+    start_prediction(model, config=config)
 
 
 def transform_annotations(folder: str):
+    """
+    Transform annotations from xml to csv. Required for deepforest training.
+
+    Args:
+        folder: path to folder containing xml files
+    """
     for file in os.listdir(folder):
         if file.endswith(".xml"):
             annotations = load_annotations(os.path.join(folder, file))
@@ -86,6 +131,18 @@ def get_rastered_annotations(path_to_images: str, path_to_annotations: str):
     return crop_dir, annotation_filename
 
 
+def clean_up():
+    """
+    Clean up crop directories
+    """
+    if (
+        config.training.unsupervised_annotations_folder
+        and config.training.unsupervised_images_folder
+    ):
+        os.system(f"rm -r {unsupervised_crop_dir}")
+    os.system(f"rm -r {crop_dir}")
+
+
 if __name__ == "__main__":
     # load config file
     config = load_pipeline_config()
@@ -126,8 +183,8 @@ if __name__ == "__main__":
     print("\nStarting training ...")
 
     # set seeds for reproducibility
-    np.random.seed(42)
-    torch.manual_seed(42)
+    np.random.seed(int(config.seed))
+    torch.manual_seed(int(config.seed))
 
     # configure model
     model = main.deepforest()
@@ -164,8 +221,14 @@ if __name__ == "__main__":
     model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
     model.trainer.fit(model)
 
-    # start prediction on target data
-    print("\nPredicting ...")
+    # start prediction on training data
+    print("\nPredictions on last train set ...")
+    config_copy = copy.deepcopy(config)
+    evaluate_model_on_train_set(model, config=config_copy)
+
+    # evaluate model on target data
+    print("\nPredictions on target dataset ...")
+    config = adjust_export_paths(config, added_subfolder_name="test")
     start_prediction(model, config=config)
 
     # clean up crop directories

@@ -19,6 +19,14 @@ def load_pipeline_config():
         action="store",
         help="relative path to config file for experiment configurations",
     )
+    parser.add_argument(
+        "-s",
+        "--seed",
+        dest="seed",
+        default=42,
+        action="store",
+        help="Seed for reproducibility",
+    )
     args = parser.parse_args()
 
     # throw error if no arguments are passed
@@ -29,6 +37,7 @@ def load_pipeline_config():
 
     with open(args.config, "rb") as f:
         config = from_dict(data_class=PipelineConfig, data=tomllib.load(f))
+    config.seed = args.seed
     return config
 
 

@@ -18,27 +18,11 @@ import torch
 
 from argparse import ArgumentParser
 
-from src.utils import export
+from src.utils import export, imports
 
 # set seeds for reproducibility
 np.random.seed(42)
 torch.manual_seed(42)
-
-
-def get_config():
-    parser = ArgumentParser()
-    parser.add_argument(
-        "-c",
-        "--config-path",
-        dest="config",
-        action="store",
-        help="relative path to config file for experiment configurations",
-    )
-    args = parser.parse_args()
-
-    with open(args.config, "rb") as f:
-        config = from_dict(data_class=PipelineConfig, data=tomllib.load(f))
-    return config
 
 
 class TreeDataset(Dataset):
@@ -156,7 +140,7 @@ def start_prediction(model, config):
 
 
 if __name__ == "__main__":
-    config = get_config()
+    config = imports.load_pipeline_config()
 
     # loading model
     model = main.deepforest()
