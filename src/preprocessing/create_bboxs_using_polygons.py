@@ -4,14 +4,40 @@ import geojson
 from pyproj import Transformer
 import argparse
 from pathlib import Path
+import numpy as np
 
-# Function to calculate the bounding box that surrounds the polygon
-def create_bounding_box_from_polygon(polygon):
-    min_x = min(point[0] for point in polygon)
-    max_x = max(point[0] for point in polygon)
-    min_y = min(point[1] for point in polygon)
-    max_y = max(point[1] for point in polygon)
-    return [(min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y), (min_x, min_y)]
+# # Function to calculate the bounding box that surrounds the polygon
+# def legacy_create_bounding_box_from_polygon(polygon):
+#     min_x = min(point[0] for point in polygon)
+#     max_x = max(point[0] for point in polygon)
+#     min_y = min(point[1] for point in polygon)
+#     max_y = max(point[1] for point in polygon)
+#     return [(min_x, min_y), (min_x, max_y), (max_x, max_y), (max_x, min_y), (min_x, min_y)]
+
+def create_bounding_box_from_polygon(crown_polygon, ground_height_circle):
+    sector_count = len(crown_polygon)
+    sector_angle = 2 * np.pi / sector_count
+
+    # Adjust angles so that the first index points to negative x direction
+    angles = np.arange(np.pi, 3 * np.pi, sector_angle)
+    
+    x_coords = []
+    y_coords = []
+
+    for i, distance in enumerate(crown_polygon):
+        angle = angles[i]
+        x = distance * np.cos(angle) + ground_height_circle['x']
+        y = distance * np.sin(angle) + ground_height_circle['y']
+        x_coords.append(x)
+        y_coords.append(y)
+    
+    # Create bounding box
+    xmin = min(x_coords)
+    xmax = max(x_coords)
+    ymin = min(y_coords)
+    ymax = max(y_coords)
+    
+    return [(xmin, ymin), (xmin, ymax), (xmax, ymax), (xmax, ymin), (xmin, ymin)]
 
 # Function to create a GeoJSON Feature for each tree
 def create_feature(tree):
@@ -28,20 +54,20 @@ def create_feature(tree):
 
     # Transform the crown polygon coordinates
     crown_polygon = tree.get("crownPolygon", [])
-    crown_polygon_transformed = []
-    if crown_polygon:
-        for i in range(0, len(crown_polygon), 2):
-            x = crown_polygon[i] + tree["groundHeightCircle"]["x"]
-            y = crown_polygon[i + 1] + tree["groundHeightCircle"]["y"]
-            lon, lat = transformer.transform(x, y)
-            crown_polygon_transformed.append((lon, lat))
+    # crown_polygon_transformed = []
+    # if crown_polygon:
+    #     for i in range(0, len(crown_polygon), 2):
+    #         x = crown_polygon[i] + tree["groundHeightCircle"]["x"]
+    #         y = crown_polygon[i + 1] + tree["groundHeightCircle"]["y"]
+    #         lon, lat = transformer.transform(x, y)
+    #         crown_polygon_transformed.append((lon, lat))
 
-    # Ensure the polygon is closed by repeating the first point at the end
-    if crown_polygon_transformed:
-        crown_polygon_transformed.append(crown_polygon_transformed[0])
+    # # Ensure the polygon is closed by repeating the first point at the end
+    # if crown_polygon_transformed:
+    #     crown_polygon_transformed.append(crown_polygon_transformed[0])
 
     # Create a bounding box that surrounds the polygon
-    bbox_transformed = create_bounding_box_from_polygon(crown_polygon_transformed)
+    bbox_transformed = create_bounding_box_from_polygon(crown_polygon, tree["groundHeightCircle"])
 
     return geojson.Feature(
         geometry=geojson.Polygon([bbox_transformed]),
