@@ -1,5 +1,5 @@
 [training]
-annotations_folder = "experiments/sauen/labels/edited_annotations_120m_1240px_3512a1_2x3" # relative path to annotations folder
+annotations_folder = "experiments/sauen/labels/computed_annotations_120m_1240px_3512a1_2x3" # relative path to annotations folder
 images_folder = "data/sauen/tiles/120m_1240px_3512a1_2x3/png" # relative path to images folder to train on
 patch_size = 1240 # size of the image in pixels
 num_epochs = 9 # number of epochs to fine-tune the model
