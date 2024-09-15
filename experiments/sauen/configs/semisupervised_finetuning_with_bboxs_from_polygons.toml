@@ -1,4 +1,6 @@
 [training]
+unsupervised_annotations_folder = "experiments/sauen/labels/computed_annotations_from_polygons_120m_1240px_3512a1_2x3" # relative path to (computed) annotations folder
+unsupervised_images_folder = "data/sauen/tiles/120m_1240px_3512a1_2x3/png" # relative path to (computed) images folder
 annotations_folder = "experiments/sauen/labels/edited_annotations_120m_1240px_3512a1" # relative path to annotations folder
 images_folder = "data/sauen/tiles/120m_1240px_3512a1/png" # relative path to images folder to train on
 patch_size = 1240 # size of the image in pixels
@@ -10,8 +12,8 @@ predict_tile = true # whether images are tiles or already crops
 tile_size = 1140 # size of individual tiles in pixels (should correspond to 40m)
 
 [export]
-annotations_path = "experiments/sauen/predictions/finetuning_on_3512a1" # export folder for prediction
-image_path = "experiments/sauen/predictions/finetuning_on_3512a1" # export folder of images in png for annotating in RectLabel
+annotations_path = "experiments/sauen/predictions/semisupervised_finetuning_with_bboxs_from_polygons" # export folder for prediction
+image_path = "experiments/sauen/predictions/semisupervised_finetuning_with_bboxs_from_polygons" # export folder of images in png for annotating in RectLabel
 image_size = 3420 # size of images to label, only provide if data.predict_tile = false
 type = "per_image" # alternative "combined"
 annotations_format = "CSV" # alternative "CSV"
@@ -21,8 +23,8 @@ column_order = ["image_path", "xmin", "ymin", "xmax", "ymax", "label", "score"] 
 index_as_label_suffix = true # use index of row as label suffix
 
 [visualization]
-image_folder = "experiments/sauen/predictions/finetuning_on_3512a1" # relative path to image folder
+image_folder = "experiments/sauen/predictions/semisupervised_finetuning_with_bboxs_from_polygons" # relative path to image folder
 image_format = "png"
-predictions_folder = "experiments/sauen/predictions/finetuning_on_3512a1" # relative path to folder with predictions
+predictions_folder = "experiments/sauen/predictions/semisupervised_finetuning_with_bboxs_from_polygons" # relative path to folder with predictions
 label_folder = "experiments/sauen/labels/edited_annotations_120m_1140px_3510b2" # relative path to folder with labels
-export_folder = "experiments/sauen/figures/finetuning_on_3512a1" # relative path to folder where exported images are saved
+export_folder = "experiments/sauen/figures/semisupervised_finetuning_with_bboxs_from_polygons" # relative path to folder where exported images are saved

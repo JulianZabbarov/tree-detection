@@ -1,4 +1,4 @@
-image_folder = "experiments/sauen/predictions/predictions_120m_1240px_3512a1_2x3" # relative path to image folder
+image_folder = "experiments/sauen/predictions/prediction_on_3512a1_2x3" # relative path to image folder
 image_format = "png"
 label_folder = "experiments/sauen/labels/computed_annotations_120m_1240px_3512a1_2x3" # relative path to folder with labels
 export_folder = "experiments/sauen/labels/computed_annotations_120m_1240px_3512a1_2x3" # relative path to folder where exported images are saved

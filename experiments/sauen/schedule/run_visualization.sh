@@ -1,1 +1,2 @@
 python src/visualization/visualize.py -c experiments/sauen/configs/visualize_computed_annotations.toml
+python src/visualization/visualize.py -c experiments/sauen/configs/visualize_computed_annotations_from_polygons.toml
