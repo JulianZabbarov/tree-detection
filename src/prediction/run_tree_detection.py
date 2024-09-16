@@ -20,11 +20,6 @@ from argparse import ArgumentParser
 
 from src.utils import export, imports
 
-# set seeds for reproducibility
-np.random.seed(42)
-torch.manual_seed(42)
-
-
 class TreeDataset(Dataset):
     def __init__(
         self, config, transform: bool = True, target_transform: bool = False
@@ -141,6 +136,10 @@ def start_prediction(model, config):
 
 if __name__ == "__main__":
     config = imports.load_pipeline_config()
+
+    # set seeds for reproducibility
+    np.random.seed(42)
+    torch.manual_seed(42)
 
     # loading model
     model = main.deepforest()

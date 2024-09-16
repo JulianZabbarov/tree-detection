@@ -38,7 +38,7 @@ def adjust_export_paths(config: PipelineConfig, added_subfolder_name: str):
     return config
 
 
-def evaluate_model_on_train_set(model, config: PipelineConfig):
+def evaluate_model_on_train_set(model, config: PipelineConfig, seed: int):
     """
     Evaluate model on training data. Adjusts config to evaluate model on training data.
 
@@ -54,7 +54,7 @@ def evaluate_model_on_train_set(model, config: PipelineConfig):
     config.data.tile_size = config.training.patch_size
     print("INFO: Training evaluation: tile_size: ", config.data.tile_size)
 
-    adjust_export_paths(config, added_subfolder_name="train")
+    adjust_export_paths(config, added_subfolder_name="train-seed-" + str(seed))
     print(
         "INFO: Training evaluation: export path: ",
         config.export.annotations_path,
@@ -182,54 +182,60 @@ if __name__ == "__main__":
 
     print("\nStarting training ...")
 
-    # set seeds for reproducibility
-    np.random.seed(int(config.seed))
-    torch.manual_seed(int(config.seed))
+    for seed in config.training.seeds:
+        print("INFO: Training with seed: ", seed)
+        
+        # copy config to avoid overwriting
+        current_config = copy.deepcopy(config)
 
-    # configure model
-    model = main.deepforest()
-    model.use_release()
-    model.config["gpus"] = "-1"
-    model.config["train"]["epochs"] = config.training.num_epochs
-    model.config["save-snapshot"] = False
+        # set seeds for reproducibility
+        np.random.seed(int(seed))
+        torch.manual_seed(int(seed))
 
-    if (
-        config.training.unsupervised_annotations_folder
-        and config.training.unsupervised_images_folder
-    ):
-        # set training data for unsupervised annotations
-        model.config["train"]["csv_file"] = os.path.join(
-            unsupervised_crop_dir, unsupervised_annotation_filename
-        )
-        model.config["train"]["root_dir"] = os.path.dirname(
-            os.path.join(
+        # configure model
+        model = main.deepforest()
+        model.use_release()
+        model.config["gpus"] = "-1"
+        model.config["train"]["epochs"] = current_config.training.num_epochs
+        model.config["save-snapshot"] = False
+
+        if (
+            current_config.training.unsupervised_annotations_folder
+            and current_config.training.unsupervised_images_folder
+        ):
+            # set training data for unsupervised annotations
+            model.config["train"]["csv_file"] = os.path.join(
                 unsupervised_crop_dir, unsupervised_annotation_filename
             )
+            model.config["train"]["root_dir"] = os.path.dirname(
+                os.path.join(
+                    unsupervised_crop_dir, unsupervised_annotation_filename
+                )
+            )
+            model.create_trainer(
+                precision=16, log_every_n_steps=1
+            )  # , logger=logger)
+            model.trainer.fit(model)
+
+        # set training data for hand-labelled annotations
+        model.config["train"]["csv_file"] = os.path.join(
+            crop_dir, annotation_filename
         )
-        model.create_trainer(
-            precision=16, log_every_n_steps=1
-        )  # , logger=logger)
+        model.config["train"]["root_dir"] = os.path.dirname(
+            os.path.join(crop_dir, annotation_filename)
+        )
+        model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
         model.trainer.fit(model)
 
-    # set training data for hand-labelled annotations
-    model.config["train"]["csv_file"] = os.path.join(
-        crop_dir, annotation_filename
-    )
-    model.config["train"]["root_dir"] = os.path.dirname(
-        os.path.join(crop_dir, annotation_filename)
-    )
-    model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
-    model.trainer.fit(model)
+        # start prediction on training data
+        print("\nPredictions on last train set ...")
+        config_copy = copy.deepcopy(current_config)
+        evaluate_model_on_train_set(model, config=config_copy, seed=seed)
 
-    # start prediction on training data
-    print("\nPredictions on last train set ...")
-    config_copy = copy.deepcopy(config)
-    evaluate_model_on_train_set(model, config=config_copy)
-
-    # evaluate model on target data
-    print("\nPredictions on target dataset ...")
-    config = adjust_export_paths(config, added_subfolder_name="test")
-    start_prediction(model, config=config)
+        # evaluate model on target data
+        print("\nPredictions on target dataset ...")
+        current_config = adjust_export_paths(current_config, added_subfolder_name="test-seed-" + str(seed))
+        start_prediction(model, config=current_config)
 
     # clean up crop directories
     clean_up()

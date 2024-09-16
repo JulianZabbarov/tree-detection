@@ -82,7 +82,7 @@ metrics.append({"metric": "f1", "score": results["f1"]})
 df = pd.DataFrame.from_dict(metrics)
 
 # save dict as csv
-if ("/train/" in args.pred) or ("/test/" in args.pred):
+if ("/train" in args.pred) or ("/test" in args.pred):
     file_name = args.pred.split("/")[-3]
 else:
     file_name = args.pred.split("/")[-2]

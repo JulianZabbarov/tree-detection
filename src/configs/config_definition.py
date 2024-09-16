@@ -9,6 +9,7 @@ class TrainingConfig:
     unsupervised_annotations_folder: str = None
     unsupervised_images_folder: str = None
     num_epochs: int = 10
+    seeds: list[int] = dataclasses.field(default_factory=lambda: [0, 1, 2, 3, 4])
 
 
 @dataclasses.dataclass

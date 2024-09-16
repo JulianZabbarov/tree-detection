@@ -16,6 +16,6 @@
 echo "START"
 source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
-srun python src/prediction/run_tree_detection.py -c experiments/sauen/configs/prediction_on_3512a1_2x3.toml -s 42
+srun python src/prediction/run_tree_detection.py -c experiments/sauen/configs/prediction_on_3512a1_2x3.toml
 echo "FINISHED"
 exit 0
