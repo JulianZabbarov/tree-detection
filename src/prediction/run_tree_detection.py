@@ -68,7 +68,7 @@ class TreeDataset(Dataset):
         return self.img_names[idx]
 
 
-def start_prediction(model, config):
+def start_prediction(model, config, seed):
     print("\nLoading dataset and model ...")
 
     if not config.data.predict_tile:
@@ -103,10 +103,12 @@ def start_prediction(model, config):
         if all_predictions is not None:
             all_predictions = pd.concat([all_predictions, pred], axis=0)
         else:
+            img_name = tree_dataset.__getname__(img_idx)
+            img_name_with_seed = img_name.split(".")[0] + "-seed-" + str(seed) + "." + img_name.split(".")[1]
             if config.export.annotations_format == "XML":
                 export.export_predictions_as_xml(
                     pred=pred,
-                    image_name=tree_dataset.__getname__(img_idx),
+                    image_name=img_name_with_seed,
                     image_folder=config.data.path_to_images,
                     export_config=config.export,
                     image_size=config.export.image_size,
@@ -116,7 +118,7 @@ def start_prediction(model, config):
                 export.export_predictions_as_csv(
                     pred_df=pred,
                     export_config=config.export,
-                    image_name=tree_dataset.__getname__(img_idx),
+                    image_name=img_name_with_seed,
                 )
 
     if all_predictions is not None:
@@ -137,12 +139,14 @@ def start_prediction(model, config):
 if __name__ == "__main__":
     config = imports.load_pipeline_config()
 
-    # set seeds for reproducibility
-    np.random.seed(42)
-    torch.manual_seed(42)
+    for seed in [0, 1, 2, 3, 4]:
 
-    # loading model
-    model = main.deepforest()
-    model.use_release()
+        # set seeds for reproducibility
+        np.random.seed(42)
+        torch.manual_seed(42)
 
-    start_prediction(model, config=config)
+        # loading model
+        model = main.deepforest()
+        model.use_release()
+
+        start_prediction(model=model, config=config, seed=seed)
