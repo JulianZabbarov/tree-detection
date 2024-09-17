@@ -18,7 +18,7 @@ source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
 
 #!/bin/sh
-EXPORT_FOLDER="experiments/sauen/results/epochs-9/test"
+EXPORT_FOLDER="experiments/sauen/results/epochs-1/test"
 
 # # evaluate predictions without fine-tuning
 # echo "Evaluating RetinaNet without fine-tuning on test set ..."

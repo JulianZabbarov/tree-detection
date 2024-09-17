@@ -177,8 +177,9 @@ if __name__ == "__main__":
         path_to_annotations=config.training.annotations_folder,
     )
 
-    # logger = WandbLogger(project="tree-detection_sauen")
-    # wandb.init(project="tree_detection-sauen", entity="julianzabbarov")
+    # load model
+    model = main.deepforest()
+    model.use_release()
 
     print("\nStarting training ...")
 
@@ -193,49 +194,48 @@ if __name__ == "__main__":
         torch.manual_seed(int(seed))
 
         # configure model
-        model = main.deepforest()
-        model.use_release()
-        model.config["gpus"] = "-1"
-        model.config["train"]["epochs"] = current_config.training.num_epochs
-        model.config["save-snapshot"] = False
+        current_model = copy.deepcopy(model)
+        current_model.config["gpus"] = "-1"
+        current_model.config["train"]["epochs"] = current_config.training.num_epochs
+        current_model.config["save-snapshot"] = False
 
         if (
             current_config.training.unsupervised_annotations_folder
             and current_config.training.unsupervised_images_folder
         ):
             # set training data for unsupervised annotations
-            model.config["train"]["csv_file"] = os.path.join(
+            current_model.config["train"]["csv_file"] = os.path.join(
                 unsupervised_crop_dir, unsupervised_annotation_filename
             )
-            model.config["train"]["root_dir"] = os.path.dirname(
+            current_model.config["train"]["root_dir"] = os.path.dirname(
                 os.path.join(
                     unsupervised_crop_dir, unsupervised_annotation_filename
                 )
             )
-            model.create_trainer(
+            current_model.create_trainer(
                 precision=16, log_every_n_steps=1
             )  # , logger=logger)
-            model.trainer.fit(model)
+            current_model.trainer.fit(current_model)
 
         # set training data for hand-labelled annotations
-        model.config["train"]["csv_file"] = os.path.join(
+        current_model.config["train"]["csv_file"] = os.path.join(
             crop_dir, annotation_filename
         )
-        model.config["train"]["root_dir"] = os.path.dirname(
+        current_model.config["train"]["root_dir"] = os.path.dirname(
             os.path.join(crop_dir, annotation_filename)
         )
-        model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
-        model.trainer.fit(model)
+        current_model.create_trainer(precision=16, log_every_n_steps=1)  # , logger=logger)
+        current_model.trainer.fit(current_model)
 
         # start prediction on training data
         print("\nPredictions on last train set ...")
         config_copy = copy.deepcopy(current_config)
-        evaluate_model_on_train_set(model, config=config_copy, seed=seed)
+        evaluate_model_on_train_set(current_model, config=config_copy, seed=seed)
 
         # evaluate model on target data
         print("\nPredictions on target dataset ...")
         current_config = adjust_export_paths(current_config, added_subfolder_name="test-seed-" + str(seed))
-        start_prediction(model, config=current_config)
+        start_prediction(current_model, config=current_config)
 
     # clean up crop directories
     clean_up()

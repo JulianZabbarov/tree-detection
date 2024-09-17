@@ -18,7 +18,7 @@ source /hpi/fs00/home/julian.zabbarov/software/miniconda3/etc/profile.d/conda.sh
 conda activate aavsd
 
 #!/bin/sh
-EXPORT_FOLDER="experiments/sauen/results/epochs-9/train"
+EXPORT_FOLDER="experiments/sauen/results/epochs-1/train"
 
 # evaluate single finetuning predictions
 for SEED in 0 1 2 3 4
