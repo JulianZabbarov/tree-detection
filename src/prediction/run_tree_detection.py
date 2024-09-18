@@ -20,6 +20,7 @@ from argparse import ArgumentParser
 
 from src.utils import export, imports
 
+
 class TreeDataset(Dataset):
     def __init__(
         self, config, transform: bool = True, target_transform: bool = False
@@ -71,6 +72,10 @@ class TreeDataset(Dataset):
 def start_prediction(model, config, seed):
     print("\nLoading dataset and model ...")
 
+    # set seeds for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
     if not config.data.predict_tile:
         tree_dataset = TreeDataset(
             config, transform=True, target_transform=False
@@ -104,7 +109,13 @@ def start_prediction(model, config, seed):
             all_predictions = pd.concat([all_predictions, pred], axis=0)
         else:
             img_name = tree_dataset.__getname__(img_idx)
-            img_name_with_seed = img_name.split(".")[0] + "-seed-" + str(seed) + "." + img_name.split(".")[1]
+            img_name_with_seed = (
+                img_name.split(".")[0]
+                + "-seed-"
+                + str(seed)
+                + "."
+                + img_name.split(".")[1]
+            )
             if config.export.annotations_format == "XML":
                 export.export_predictions_as_xml(
                     pred=pred,
@@ -140,10 +151,6 @@ if __name__ == "__main__":
     config = imports.load_pipeline_config()
 
     for seed in [0, 1, 2, 3, 4]:
-
-        # set seeds for reproducibility
-        np.random.seed(42)
-        torch.manual_seed(42)
 
         # loading model
         model = main.deepforest()
