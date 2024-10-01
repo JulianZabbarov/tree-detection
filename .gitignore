@@ -1,12 +1,17 @@
-/data
+# folder
 /wandb
 **/lightning_logs
 **/predicted_images
+**/predictions/
+**/labels/
+**/figures/
+
+# files
 **.csv
-**.png
 **.pyc
 **.log
 **.wandb
 **.json
 **.yaml
 **.txt
+**.tif
