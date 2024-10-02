@@ -96,6 +96,8 @@ The first script creates bounding boxes using the provided polyon information in
 
 The filtered bounding boxes are exported to the following folder: "data/sauen/treelocations/for_annotation". The folder is created dynamically when executing the scripts above. To use the derived bounding boxes as labels, copy them to a labels directory for your experiments and specify the path in the experiments config.toml like [here](experiments/sauen/configs/semisupervised_finetuning_with_bboxs_from_polygons.toml)
 
+You can visualize an exemplary bounding box that was derived from the provided polygon information for the first tree from [this](data/sauen/treelocations/treeDetails-20230720_Sauen_PLS_part1.json) file using [this](experiments/sauen/evaluation/plot_bounding_box_from_polygon.ipynb) Python notebook.
+
 ### Evaluation of predictions
 
 To evaluate the predictions from all experiments that were performed as part of the AAVSD seminar, call the following files for train and test scores, respectively:
