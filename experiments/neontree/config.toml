@@ -1,6 +1,7 @@
 [data]
 path_to_images = "data/neontree/evaluation/RGB_with_annotations" # relative path to image folder
 image_size = 400 # size of images to label
+predict_tile = false # whether images are tiles or already crops
 
 [export]
 annotations_path = "experiments/neontree/annotations" # export folder for annotations
