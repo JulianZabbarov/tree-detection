@@ -4,8 +4,6 @@ This is the repository for the course "Algorithms for Analysis and Visualization
 
 ## Getting started
 
-### Installation
-
 Create a new Python 3.11 environment like so ...
 ```
 conda create -n aavsd python=3.11
@@ -20,14 +18,18 @@ If you name the environment "aavsd" you have to make less changes to the sbatch 
 > [!NOTE]  
 > If you have troubles getting the code to run and get errors with numpy, double-check that numpy==1.26.4 installed. Numpy version of 2 and above can cause errors with the deep-forest package.
 
-### Run DeepForest on NeonTree benchmark
+## Run DeepForest on NeonTree benchmark
 
-To assess the capabilities of the shipped RetinaNet in DeepForest, you can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection. To do so, import the RGB images into [this](data/neontree/evaluation/RGB_with_annotations) path. This folder should contain all the RGB images from the benchmark for which ground truth labels are available. Please contact josafat.burmeister@hpi.de for to access this data. For testing purposes, one benchmarking image is provided under the path above. To start the benchmarking process call:
+> [!IMPORTANT]  
+> To run the benchmark, you first have to import the RGB images of the benchmark to [this](data/neontree/evaluation/RGB_with_annotations) folder. The folder should contain all the RGB images from the benchmark for which ground truth labels are available. Please contact josafat.burmeister@hpi.de for to access this data. For testing purposes, one benchmarking image is provided under the path above.
+
+You can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection. To start the benchmarking process call:
 ```
 python src/prediction/run_tree_detection.py -c experiments/neontree/config.toml
 ```
+The predictions are exported to the path defined in export.annotations_path in the config.toml.
 
-You can evaluate the predictions like so:
+You can evaluate the predictions for the benchmark like so:
 ```
 python src/evaluation/evaluate_predictions.py -p "experiments/neontree/annotations/neontree.csv" -l "data/neontree/evaluation/benchmark_annotations.csv" -t 0.4 -e experiments/neontree/results
 ```
@@ -79,9 +81,10 @@ In this case, the DeepForest model is first fine-tuned on algorithmically derive
 
 This repository contains a preprocessing pipeline that builds upon algorithmically derived tree locations and crown polygon information to derive bounding boxes. Here is a pipeline overview: tree locations -> cluster tree locations (file as json) -> extract bboxs (file as geojson) -> filter bboxs (file as geojson) -> filtered bounding boxes.
 
-To run the preprocessing pipeline you have to add tif files that include geolocation information to the repository. Tif files are required to filter out the bounding boxes for the areas of interest. To reproduce the findings from the Sauen experiments add the three tif files for the three areas to the three folders in [this](data/sauen/tiles) directory. The name of the tif file should match the png in the respective subdirectory called "png".
+> [!IMPORTANT]  
+>  To reproduce the findings from the Sauen experiments, add the three tif files for the three areas to the three folders in [this](data/sauen/tiles) directory.  The tif files contain geolocation information on the relevent forest areas and are required to filter out the bounding boxes for the areas of interest in step 4 of the pipeline. The name of the tif file should match the png in the respective subdirectory called "png" like [here](data/sauen/tiles/120m_1140px_3510b2/png).
 
-If done so, you can derive bounding boxes from the tree details stored [here](data/sauen/treelocations). To do so you can call one of the two following scripts:
+After importing the required tif files (see message above), you can generate bounding boxes from the tree details stored [here](data/sauen/treelocations). To start the pipeline, call one of the two following scripts:
 
 ```
 sh src/preprocessing/run_tree_processing_with_polygons.sh
