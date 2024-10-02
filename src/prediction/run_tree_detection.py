@@ -111,8 +111,6 @@ def start_prediction(model, config, seed):
             img_name = tree_dataset.__getname__(img_idx)
             img_name_with_seed = (
                 img_name.split(".")[0]
-                + "-seed-"
-                + str(seed)
                 + "."
                 + img_name.split(".")[1]
             )

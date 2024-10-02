@@ -64,7 +64,7 @@ def evaluate_model_on_train_set(model, config: PipelineConfig, seed: int):
         config.export.image_path,
     )
 
-    start_prediction(model, config=config)
+    start_prediction(model, config=config, seed=seed)
 
 
 def transform_annotations(folder: str):
@@ -235,7 +235,7 @@ if __name__ == "__main__":
         # evaluate model on target data
         print("\nPredictions on target dataset ...")
         current_config = adjust_export_paths(current_config, added_subfolder_name="test-seed-" + str(seed))
-        start_prediction(current_model, config=current_config)
+        start_prediction(current_model, config=current_config, seed=seed)
 
     # clean up crop directories
     clean_up()

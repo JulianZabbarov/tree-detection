@@ -6,7 +6,7 @@ This is the repository for the course "Algorithms for Analysis and Visualization
 
 ### Installation
 
-Install the required packages in an Python 3.1 environment:
+Install the required packages in an Python 3.11 environment:
 
 ```
 pip install -r requirements.txt
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 ### Run DeepForest on NeonTree benchmark
 
-To assess the capabilities of the shipped RetinaNet in DeepForest, you can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection:
+To assess the capabilities of the shipped RetinaNet in DeepForest, you can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection. To do so, import the RGB images into [this](data/neontree/evaluation/RGB_with_annotations) path. Please contact josafat.burmeister@hpi.de for data access. After that you can call:
 ```
 python src/prediction/run_tree_detection.py -c experiments/neontree/config.toml
 ```
@@ -32,7 +32,7 @@ In the following, I provide an example on how to the code of this repository for
 
 Run predictions on data ([link](experiments/sauen/edited_annotations_120m_1140px_3510b2)) from Sauen:
 ```
-python src/prediction/run_tree_detection.py -c experiments/sauen/config.toml
+python src/prediction/run_tree_detection.py -c experiments/sauen/configs/prediction_on_3510b2.toml
 ```
 
 Evaluate predictions
