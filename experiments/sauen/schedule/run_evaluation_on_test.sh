@@ -20,10 +20,6 @@ conda activate aavsd
 #!/bin/sh
 EXPORT_FOLDER="experiments/sauen/results/epochs-1/test"
 
-# # evaluate predictions without fine-tuning
-# echo "Evaluating RetinaNet without fine-tuning on test set ..."
-# srun python src/evaluation/evaluate_predictions.py -p experiments/sauen/predictions/prediction_on_3510b2/20230809_Sauen_3510b2_tile.csv -l experiments/sauen/labels/edited_annotations_120m_1140px_3510b2/20230809_Sauen_3510b2_tile.csv -t 0.4 -e $EXPORT_FOLDER
-
 # evaluate single finetuning predictions
 for SEED in 0 1 2 3 4
 do
