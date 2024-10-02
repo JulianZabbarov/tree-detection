@@ -9,11 +9,13 @@
 **/dropped_polygons/
 **/for_annotation/
 **/results_backup/
+/experiments/neontree/results
+/experiments/neontree/annotations
 
 # files
+**.tif
 **.pyc
 **.log
 **.wandb
 **.yaml
 **.txt
-**.tif

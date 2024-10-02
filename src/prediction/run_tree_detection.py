@@ -31,6 +31,7 @@ class TreeDataset(Dataset):
         )
         # filter out non-image files
         self.img_names = [img for img in self.img_names if img.endswith(".tif")]
+        print(len(self.img_names))
         self.transform = transform
         self.target_transform = target_transform
 
@@ -69,12 +70,8 @@ class TreeDataset(Dataset):
         return self.img_names[idx]
 
 
-def start_prediction(model, config, seed):
+def start_prediction(model, config):
     print("\nLoading dataset and model ...")
-
-    # set seeds for reproducibility
-    np.random.seed(seed)
-    torch.manual_seed(seed)
 
     if not config.data.predict_tile:
         tree_dataset = TreeDataset(
@@ -100,6 +97,8 @@ def start_prediction(model, config, seed):
                 patch_overlap=0.1,
             )
         else:
+            current_image = tree_dataset.__getitem__(img_idx).astype(np.float32)
+            print(type(current_image))
             pred = model.predict_image(
                 image=tree_dataset.__getitem__(img_idx).astype(np.float32),
                 return_plot=False,
@@ -148,10 +147,8 @@ def start_prediction(model, config, seed):
 if __name__ == "__main__":
     config = imports.load_pipeline_config()
 
-    for seed in [0, 1, 2, 3, 4]:
+    # loading model
+    model = main.deepforest()
+    model.use_release()
 
-        # loading model
-        model = main.deepforest()
-        model.use_release()
-
-        start_prediction(model=model, config=config, seed=seed)
+    start_prediction(model=model, config=config)

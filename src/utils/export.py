@@ -45,7 +45,7 @@ def export_predictions_as_csv(
         export_path,
         index=False,
     )
-    print(f"Exported {image_name} to {export_path}.")
+    print(f">>> Exported {image_name} to {export_path}.")
 
 
 def export_predictions_as_xml(
