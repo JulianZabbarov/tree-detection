@@ -17,17 +17,22 @@ pip install -r requirements.txt
 
 If you name the environment "aavsd" you have to make less changes to the sbatch files for scheduling the experiments. Otherwise, make sure to make the required adjustments there. This also includes the root directory and the export folder of logging files.
 
+> [!NOTE]  
+> If you have troubles getting the code to run and get errors with numpy, double-check that numpy==1.26.4 installed. Numpy version of 2 and above can cause errors with the deep-forest package.
+
 ### Run DeepForest on NeonTree benchmark
 
-To assess the capabilities of the shipped RetinaNet in DeepForest, you can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection. To do so, import the RGB images into [this](data/neontree/evaluation/RGB_with_annotations) path. Please contact josafat.burmeister@hpi.de for data access. After that you can call:
+To assess the capabilities of the shipped RetinaNet in DeepForest, you can run predictions on NeonTreeDataset, a popular benchmark for tree crown detection. To do so, import the RGB images into [this](data/neontree/evaluation/RGB_with_annotations) path. Please contact josafat.burmeister@hpi.de for data access. For testing purposes, one benchmarking image is provided under the path above. To start the benchmarking process call:
 ```
 python src/prediction/run_tree_detection.py -c experiments/neontree/config.toml
 ```
 
-Evaluate predictions:
+You can evaluate the like so predictions:
 ```
-python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments/neontree/annotations/neontree.csv" --path-to-labels "data/neontree/evaluation/benchmark_annotations.csv" --iou-threshold 0.4
+python src/evaluation/evaluate_predictions.py -p "experiments/neontree/annotations/neontree.csv" -l "data/neontree/evaluation/benchmark_annotations.csv" -t 0.4 -e experiments/neontree/results
 ```
+
+If the first line is "No predictions are made" manually check the predictions and the labels. A typical error is that the image types do not match under "image_path". You can change the image type in the predictions using the "image_format" under export in the config. For an example, see [here](experiments/neontree/config.toml).
 
 ## Evaluate results from Sauen experiments
 
