@@ -1,4 +1,4 @@
 python src/preprocessing/cluster_trees_with_polygons.py -f data/sauen/treelocations
 python src/preprocessing/create_bboxs_using_polygons.py -f data/sauen/treelocations/with_polygons
 python src/preprocessing/filter_bboxs.py -t 0.25 -s 10 -f data/sauen/treelocations/with_polygons/treeDetails-20230720_Sauen_PLS_clustered_with_polygon-bboxs_using_polygons.geojson
-python src/preprocessing/get_overlapping_bboxs_with_tif.py -t data/sauen/tiles/120m_1240px_3512a1-2x3_merged/20230720_Sauen_3512a1_2x3-tile-rendered.tif -g data/sauen/treelocations/with_polygons/filtered_trees-0_25iou-10.0m.geojson -o data/sauen/treelocations/for_annotation/20230720_Sauen_3512a1_2x3_with_bboxs_from_polygons.xml
+python src/preprocessing/get_overlapping_bboxs_with_tif.py -t data/sauen/tiles/120m_1240px_3512a1_2x3/20230720_Sauen_3512a1_2x3-tile-rendered.tif -g data/sauen/treelocations/with_polygons/filtered_trees-0_25iou-10.0m.geojson -o data/sauen/treelocations/for_annotation/20230720_Sauen_3512a1_2x3_with_bboxs_from_polygons.xml

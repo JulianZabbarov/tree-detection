@@ -26,11 +26,11 @@ python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments
 
 ## How to Run DeepForest on Sauen data
 
-In the following, I provide an example on how to the code of this repository for tree-crown detections using hand-labelled data from the Sauen forest. You find the hand-annotated labels [here](experiments/sauen).
+In the following, I provide an example on how to the code of this repository for tree-crown detections using hand-labelled data from the Sauen forest. You find the hand-annotated labels [here](experiments/sauen/labels).
 
 ### Predictions without fine-tuning
 
-Run predictions on data ([link](experiments/sauen/edited_annotations_120m_1140px_3510b2)) from Sauen:
+Run predictions on dataset 3510b3 ([link](experiments/sauen/edited_annotations_120m_1140px_3510b2)) from Sauen. Note that I made a naming consistent namign error, each reference to 3510b2 in this repository should be 3510b3.
 ```
 python src/prediction/run_tree_detection.py -c experiments/sauen/configs/prediction_on_3510b2.toml
 ```
@@ -40,7 +40,7 @@ Evaluate predictions
 python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments/sauen/predictions_120m_1140px_3510b2/20230809_Sauen_3510b2_tile.csv" --path-to-labels "experiments/sauen/edited_annotations_120m_1140px_3510b2/20230809_Sauen_3510b2_tile.csv" --iou-threshold 0.4
 ```
 
-### Prediction with fine-tuning
+### Prediction using single-stage fine-tuning
 
 Finetune and predict with RetinaNet from DeepForest on defined images in finetuning_config.toml:
 ```
@@ -52,25 +52,22 @@ Evaluate predictions after finetuning:
 python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments/sauen/finetuning_predictions_120m_1140px_3510b2/20230809_Sauen_3510b2_tile.csv" --path-to-labels "experiments/sauen/edited_annotations_120m_1140px_3510b2/20230809_Sauen_3510b2_tile.csv" --iou-threshold 0.4
 ```
 
-### Prediction with two-step fine-tuning
+### Prediction with two-stage semi-supervised fine-tuning
+
+
 
 ##### Pre-processing tree locations extracted from point clouds
 
-Pipeline overview: tree locations -> cluster tree locations (files in json) -> extract bboxs (files in geojson) -> filter bboxs (files in geojson) -> tree locations with bounding boxes.
+This repository contains a preprocessing pipeline that builds upon algorithmically derived tree locations and crown polygon information to derive bounding boxes. Here is a pipeline overview: tree locations -> cluster tree locations (file as json) -> extract bboxs (file as geojson) -> filter bboxs (file as geojson) -> filtered bounding boxes.
 
-This repository provides the functionality to create bounding boxes from json data that contains tree locations extracted from point clouds. As the tree locations of individual trees can appear multiple times in the data, the following script allows you to cluster tree locations.
-```
-python src/preprocessing/cluster_trees.py
-```
-To retain polygon information, use "python src/preprocessing/cluster_trees_with_polygons.py".
+To run the preprocessing pipeline you have to add tif files that include geolocation information to the repository. Tif files are required to filter out the bounding boxes for the areas of interest. To reproduce the findings from the Sauen experiments add the three tif files for the three areas to the three folders in [this](data/sauen/tiles) directory. The name of the tif file should match the png in the respective subdirectory called "png".
 
+If done so, you can derive bounding boxes from the tree details stored [here](data/sauen/treelocations). To do so you can call one of the two following scripts:
 
-You can then use the following script to create bounding boxes for the clustered trees.
 ```
-src/preprocessing/convert_json_to_geojson_bbox.py
+sh src/preprocessing/run_tree_processing_with_polygons.sh
+sh src/preprocessing/run_tree_processing_without_polygons.sh
 ```
+The first script creates bounding boxes using the provided polyon information in the tree details. The second script uses bounding boxes by using the radius of the tree crown.
 
-To improve the bounding boxes for fine-tuning tree-detection models that use UAV data, the following script can be run to extract bounding boxes of the highests trees and a certain IoU threshold.
-```
-python src/preprocessing/filter_bboxs.py -f data/sauen/treelocations/treeDetails-20230720_Sauen_PLS_clustered-bboxs.geojson
-```
+The filtered bounding boxes are exported to the following folder: "data/sauen/treelocations/for_annotation". The folder is created dynamically when executing the scripts above. To use the derived bounding boxes as labels, copy them to a labels directory for your experiments and specify the path in the experiments config.toml like [here](experiments/sauen/configs/semisupervised_finetuning_with_bboxs_from_polygons.toml)

@@ -15,7 +15,6 @@ def world_to_pixel(geo_transform, x, y):
     e = geo_transform.e
     f = geo_transform.f
 
-    print(a, b, c, d, e, f)
     if a == 0.0 or e == 0.0:
         raise ValueError("Affine transform scaling factors cannot be zero.")
     
@@ -82,8 +81,6 @@ def filter_bounding_boxes_to_xml(tif_path, geojson_path, output_xml, folder_name
         for index, row in gdf.iterrows():
             bbox = row['geometry']
             
-            print(bbox)
-            print(forest_polygon)
             # Clip the bounding box to the forest polygon
             clipped_bbox = bbox.intersection(forest_polygon)
             
@@ -114,7 +111,7 @@ def filter_bounding_boxes_to_xml(tif_path, geojson_path, output_xml, folder_name
         folder_elem.text = folder_name
 
         filename_elem = ET.SubElement(root, 'filename')
-        filename_elem.text = filename
+        filename_elem.text = filename.replace('.tif', '.png')
 
         # Add image size
         size_elem = ET.SubElement(root, 'size')
@@ -130,6 +127,10 @@ def filter_bounding_boxes_to_xml(tif_path, geojson_path, output_xml, folder_name
         # Append all the XML objects (bounding boxes)
         for xml_obj in xml_objects:
             root.append(xml_obj)
+
+        # create folder if folder for output XML does not exist
+        if not os.path.exists(os.path.dirname(output_xml)):
+            os.makedirs(os.path.dirname(output_xml))
 
         # Write the XML tree to the output XML file
         tree = ET.ElementTree(root)

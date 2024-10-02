@@ -5,6 +5,10 @@
 **/predictions/
 **/labels/
 **/figures/
+**/with_polygons/
+**/dropped_polygons/
+**/for_annotation/
+**/results_backup/
 
 # files
 **.csv
