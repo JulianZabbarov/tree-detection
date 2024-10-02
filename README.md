@@ -63,6 +63,9 @@ The predictions are exported to experiments/sauen/predictions. The folder should
 
 ### Prediction using single-stage fine-tuning
 
+> [!NOTE]  
+> Fine-tuning the DeepForest model is currently not available on Macs with M chips due to some missing implementations in torchvision. Please run the model fine-tuning on Linux machines.
+
 Second, you can fine-tune the DeepForest model using hand-annotated labels:
 ```
 sbatch experiments/sauen/schedule/schedule_prediction_on_3512a1.sh
