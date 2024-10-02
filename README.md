@@ -36,7 +36,7 @@ python src/evaluation/evaluate_predictions.py --path-to-predictions "experiments
 ## How to run DeepForest on Sauen data
 
 > [!NOTE]  
-> Note that I made a consistent naming mistake - each reference to dataset 3510b2 in this repository should be 3510b3.
+> I made a consistent naming mistake: Each reference to dataset 3510b2 in this repository should be 3510b3.
 
 In the following, I provide an example on how to the code of this repository for tree-crown detections using data from the Sauen forest. All experiments are configured [here](experiments/sauen/configs). You find the labels for training (bounding boxes) [here](experiments/sauen/labels). 
 
@@ -98,4 +98,4 @@ or
 ```
 sbatch experiments/sauen/schedule/run_evaluation_on_test.sh
 ```
-The results are exported to experiments/sauen/results.
+The results are exported to experiments/sauen/new_results.
