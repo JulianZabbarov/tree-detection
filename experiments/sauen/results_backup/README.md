@@ -1,1 +1,0 @@
-Note: finetuning_on_3512a1 included hand-annotated bboxs.
